@@ -1,0 +1,39 @@
+<circuit version="1.1.0-SR1" rev="2005" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="Subcircuit" CircId="Nano-1" mainComp="false" Show_id="true" Show_Val="false" Pos="-384,-132" rotation="-180" hflip="1" vflip="1" label="Nano-1" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0">
+<mainCompProps MainCompId="m328 TQFP-269" Frequency="16 MHz" Auto_Load="false" saveEepr="true" MainMcu="true" SerialMon="-1" />
+</item>
+
+<item itemtype="Subcircuit" CircId="74HC595-2" mainComp="false" Show_id="true" Show_Val="false" Pos="-212,-20" rotation="-180" hflip="1" vflip="1" label="74HC595-2" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Input_High_V="2.5 V" Input_Low_V="2.5 V" Input_Imped="1e+09 Ω" Out_High_V="5 V" Out_Low_V="0 V" Out_Imped="40 Ω" Tpd_ps="10 ns" Tr_ps="3 ns" Tf_ps="4 ns" Logic_Symbol="false" />
+
+<item itemtype="Ground" CircId="Ground-3" mainComp="false" Show_id="false" Show_Val="false" Pos="-132,-112" rotation="0" hflip="1" vflip="1" label="Ground-3" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="Seven Segment" CircId="Seven Segment-5" mainComp="false" Show_id="false" Show_Val="false" Pos="-164,-52" rotation="0" hflip="1" vflip="1" label="Seven Segment-5" idLabPos="20,-44" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Yellow" NumDisplays="1" Vertical_Pins="false" CommonCathode="true" Threshold="2.4 V" MaxCurrent="20 mA" Resistance="1 Ω" />
+
+<item itemtype="Connector" uid="Connector-13" startpinid="74HC595-2-Q1" endpinid="Seven Segment-5-pin_a" pointList="-204,-28,-188,-28,-188,-76" />
+
+<item itemtype="Connector" uid="Connector-15" startpinid="74HC595-2-Q3" endpinid="Seven Segment-5-pin_c" pointList="-204,-44,-188,-44,-188,-60" />
+
+<item itemtype="Connector" uid="Connector-16" startpinid="74HC595-2-Q4" endpinid="Seven Segment-5-pin_d" pointList="-204,-52,-188,-52" />
+
+<item itemtype="Connector" uid="Connector-17" startpinid="74HC595-2-Q5" endpinid="Seven Segment-5-pin_e" pointList="-204,-60,-188,-60,-188,-44" />
+
+<item itemtype="Connector" uid="Connector-18" startpinid="74HC595-2-Q6" endpinid="Seven Segment-5-pin_f" pointList="-204,-68,-188,-68,-188,-36" />
+
+<item itemtype="Connector" uid="Connector-19" startpinid="74HC595-2-Q7" endpinid="Seven Segment-5-pin_g" pointList="-204,-76,-188,-76,-188,-28" />
+
+<item itemtype="Connector" uid="Connector-14" startpinid="74HC595-2-Q2" endpinid="Seven Segment-5-pin_b" pointList="-204,-36,-188,-36,-188,-68" />
+
+<item itemtype="Connector" uid="Connector-20" startpinid="Ground-3-Gnd" endpinid="Seven Segment-5-pin_commona" pointList="-132,-128,-132,-20,-156,-20" />
+
+<item itemtype="Connector" uid="Connector-109" startpinid="74HC595-2-!OE" endpinid="74HC595-2-!MR" pointList="-252,-52,-280,-52,-280,-76,-252,-76" />
+
+<item itemtype="Connector" uid="Connector-132" startpinid="Seven Segment-5-pin_dot" endpinid="Nano-1-5V0" pointList="-172,-20,-172,52,-396,52,-396,-20,-376,-20" />
+
+<item itemtype="Connector" uid="Connector-155" startpinid="74HC595-2-SHC" endpinid="Nano-1-8" pointList="-252,-68,-292,-68,-292,-76,-328,-76" />
+
+<item itemtype="Connector" uid="Connector-156" startpinid="74HC595-2-STC" endpinid="Nano-1-7" pointList="-252,-60,-308,-60,-308,-68,-328,-68" />
+
+<item itemtype="Connector" uid="Connector-157" startpinid="74HC595-2-DS" endpinid="Nano-1-4" pointList="-252,-44,-328,-44" />
+
+</circuit>
