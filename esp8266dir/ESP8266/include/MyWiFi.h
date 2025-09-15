@@ -8,15 +8,21 @@ class MyClassEsp8266 {
     
 public:
     /// @brief Конструктор инициализирует объект WiFi с указаным логином и паролем 
-    /// @param login логин 
-    /// @param password пароль
-    MyClassEsp8266(String login, String password);
+    /// @param loginAP логин 
+    /// @param passwordAP пароль
+    MyClassEsp8266(String loginAP, String passwordAP, String loginSTA, String passwordSTA);
     /// @brief метод поднимает точку с WiFi, доступен будет по 192.168.4.1
-    void setupWiFi();
-
+    void setupWiFiApMode();
+    /// @brief метод инициализирует модуль и пытается подключиться к переданному вай фай
+    void setupWiFiSTAMode();
+    /// @brief инициализация двух режимов работы, пытается 5 сек достучаться до STA точки, в случае неудачи возвращает false
+    /// @return в случае неудачи подклчюения к точки, возвращает false, иначе true
+    bool setupingTwoModes();
 private:
-    String _login;
-    String _password;
+    String _loginAP;
+    String _passwordAP;
+    String _loginSTA;
+    String _passwordSTA;
 };
 
 #endif // ESP8266WIFI_H

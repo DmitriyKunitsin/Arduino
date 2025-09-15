@@ -1,14 +1,17 @@
 #include "MyWiFi.h"
 
-const char* _LOGIN = "WiFi_DIMA_K";
-const char* _PASSWORD = "PASSWORD";
+const char* _LOGIN_AP = "AP_DIMA_K";
+const char* _PASSWORD_AP = "PASSWORD";
 
-MyClassEsp8266 WiFiModule(_LOGIN, _PASSWORD);
+const char* _LOGIN_STA = "Xiaomi_1C16";
+const char* _PASSWORD_STA = "20081111";
+
+MyClassEsp8266 CustomWiFiModule(_LOGIN_AP , _PASSWORD_AP, _LOGIN_STA, _PASSWORD_STA);
 
 void setup() {
-    WiFiModule.setupWiFi();
+    Serial.begin(9600);
+    CustomWiFiModule.setupingTwoModes();
 }
 
 void loop() {
-
 }
