@@ -1,9 +1,8 @@
-#ifndef ESP8266WIFI_H
-#define ESP8266WIFI_H
+#ifndef MYWIFI_H
+#define MYWIFI_H
 
-#include <iostream>
-#include <string.h>
-#include <esp8266WiFi.h>
+#include <ESP8266WiFi.h>
+#include <Arduino.h> 
 
 class esp8266 {
     
@@ -11,7 +10,7 @@ public:
     /// @brief Конструктор инициализирует объект WiFi с указаным логином и паролем 
     /// @param login логин 
     /// @param password пароль
-    esp8266(std::string login, std::string password);
+    esp8266(String login, String password);
     /// @brief метод поднимает точку с WiFi, доступен будет по 192.168.4.1
     void setupWiFi();
 
