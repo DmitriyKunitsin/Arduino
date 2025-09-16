@@ -7,11 +7,13 @@ MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, Str
 void MyClassEsp8266::setupWiFiApMode() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP(this->_loginAP, this->_passwordAP);
+    Serial.println("init AP mode");
 }
 
 void MyClassEsp8266::setupWiFiSTAMode() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(this->_loginSTA, this->_passwordSTA);
+    Serial.println("init STA mode");
 }
 
 bool MyClassEsp8266::setupingTwoModes() {
@@ -27,12 +29,40 @@ bool MyClassEsp8266::setupingTwoModes() {
     while (WiFi.status() != WL_CONNECTED) {  // если не подключены
         delay(500);
         Serial.println("Try connecting " + countTry);
+        countTry++;
         if (countTry == 10) {
+            break;
             return false;
         }
     }
     Serial.println("Connecting succerful!");
     Serial.print("IP address : ");
     Serial.println(WiFi.localIP());
+    return true;
+}
+
+bool MyClassEsp8266::serverOn() {
+    // if (WiFi.status() != WL_CONNECTED) {
+    //     return false;
+    // }
+    // передаем обработчик как лямбду
+    server.on("/hi", HTTP_GET, [](AsyncWebServerRequest *request) {
+        String html = R"html(
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>My page</title>
+            </head>
+            <body>
+                <h1>Hello, world!</h1>
+                <p>This is my HTML-page for ESP8266.</p>
+                <button onclick="alert('Клик!')">Click me!</button>
+            </body>
+            </html>
+        )html";
+        request->send(200, "text/html", html);
+    });
+
+    server.begin();
     return true;
 }

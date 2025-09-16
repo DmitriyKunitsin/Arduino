@@ -6,11 +6,13 @@ const char* _PASSWORD_AP = "PASSWORD";
 const char* _LOGIN_STA = "Xiaomi_1C16";
 const char* _PASSWORD_STA = "20081111";
 
-MyClassEsp8266 CustomWiFiModule(_LOGIN_AP , _PASSWORD_AP, _LOGIN_STA, _PASSWORD_STA);
+MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_STA);
 
 void setup() {
     Serial.begin(9600);
-    CustomWiFiModule.setupingTwoModes();
+    // CustomWiFiModule.setupingTwoModes();
+    CustomWiFiModule.setupWiFiApMode();
+    CustomWiFiModule.serverOn();
 }
 
 void loop() {

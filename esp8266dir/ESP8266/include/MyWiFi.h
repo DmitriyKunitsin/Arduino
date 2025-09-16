@@ -19,12 +19,15 @@ public:
     /// @brief инициализация двух режимов работы, пытается 5 сек достучаться до STA точки, в случае неудачи возвращает false
     /// @return в случае неудачи подклчюения к точки, возвращает false, иначе true
     bool setupingTwoModes();
+    bool serverOn();
+
 private:
     String _loginAP;
     String _passwordAP;
     String _loginSTA;
     String _passwordSTA;
     AsyncWebServer server;
+
 };
 
 #endif // ESP8266WIFI_H
