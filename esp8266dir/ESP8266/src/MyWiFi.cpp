@@ -1,7 +1,7 @@
 #include "MyWiFi.h"
 
 MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA)
-    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), server(80) {
+    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), server(80), deviceIP(192,168,4,1) {
 }
 
 void MyClassEsp8266::setupWiFiApMode() {
@@ -65,4 +65,8 @@ bool MyClassEsp8266::serverOn() {
 
     server.begin();
     return true;
+}
+
+void alert(String message) {
+    Serial.println(message);
 }

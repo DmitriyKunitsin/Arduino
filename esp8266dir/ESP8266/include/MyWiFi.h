@@ -27,7 +27,7 @@ private:
     String _loginSTA;
     String _passwordSTA;
     AsyncWebServer server;
-
+    IPAddress deviceIP;
 };
 
 #endif // ESP8266WIFI_H

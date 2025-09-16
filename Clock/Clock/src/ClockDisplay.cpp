@@ -1,13 +1,9 @@
 #include "ClockDisplay.h"
 
-ClockDisplay* ClockDisplay::instance = nullptr;
+ClockDisplay *ClockDisplay::instance = nullptr;
 
 ClockDisplay::ClockDisplay()
-    : status(0), firstStart(true), isChangedSegment(true),
-      prevMillies(0), currentMillies(0), seconds(0),
-      minuts(0x0500), hour(0x0100),
-      lastPressInterruptBtn(0), IsCheckedBtnSetting(false)
-{
+    : status(0), firstStart(true), isChangedSegment(true), prevMillies(0), currentMillies(0), seconds(0), minuts(0x0500), hour(0x0100), lastPressInterruptBtn(0), IsCheckedBtnSetting(false) {
     grounds[0] = PIN_GROUND_ONE_DIGIT;
     grounds[1] = PIN_GROUND_SECOND_DIGIT;
     grounds[2] = PIN_GROUND_THREE_DIGIT;
@@ -85,7 +81,7 @@ void ClockDisplay::printDisplay(byte printNumber) {
 }
 
 void ClockDisplay::InitializatedDisplay() {
-    int error[4] = { 11, 11, 11, 11 };
+    int error[4] = {11, 11, 11, 11};
     displaingValues(error, 250);
     delay(250);
     displaingValues(error, 250);
@@ -131,7 +127,7 @@ void ClockDisplay::incrementMinutes(unsigned int &minuts) {
         leftDigital++;
         if (leftDigital > 5) {
             leftDigital = 0;
-            if (status == 0) { // Work
+            if (status == 0) {  // Work
                 incrementHour(hour);
             }
         }
@@ -170,9 +166,9 @@ void ClockDisplay::checkDurationBtnSetting() {
 
     if (pressDuration >= 10000 && digitalRead(BTN_PIN_INTERRUPT) == HIGH) {
         IsCheckedBtnSetting = false;
-        status = 0; // Work
+        status = 0;  // Work
     } else if (status != 1 && pressDuration >= 1500 && digitalRead(BTN_PIN_INTERRUPT) == LOW) {
-        status = 1; // Setting
+        status = 1;  // Setting
     } else if (status == 1 && digitalRead(BTN_PIN_INTERRUPT) == LOW) {
         changeSetment(isChangedSegment);
         isChangedSegment = !isChangedSegment;
