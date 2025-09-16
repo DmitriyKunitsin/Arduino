@@ -1,10 +1,7 @@
 #include "MyWiFi.h"
 
-MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA) {
-    this->_loginAP = login;
-    this->_passwordAP = password;
-    this->_loginSTA = logSTA;
-    this->_passwordSTA = passSTA;
+MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA)
+    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), server(80) {
 }
 
 void MyClassEsp8266::setupWiFiApMode() {
@@ -27,10 +24,10 @@ bool MyClassEsp8266::setupingTwoModes() {
     WiFi.begin(this->_loginSTA, this->_passwordSTA);
     int countTry = 0;
     Serial.print("Connecting to Wifi " + this->_loginSTA);
-    while(WiFi.status() != WL_CONNECTED) {// если не подключены
+    while (WiFi.status() != WL_CONNECTED) {  // если не подключены
         delay(500);
-        Serial.println("Try connecting " + countTry );
-        if(countTry == 10) {
+        Serial.println("Try connecting " + countTry);
+        if (countTry == 10) {
             return false;
         }
     }

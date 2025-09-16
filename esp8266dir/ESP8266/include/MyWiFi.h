@@ -2,6 +2,7 @@
 #define MYWIFI_H
 
 #include <ESP8266WiFi.h>
+#include <ESPAsyncWebServer.h>
 #include <Arduino.h> 
 
 class MyClassEsp8266 {
@@ -23,6 +24,7 @@ private:
     String _passwordAP;
     String _loginSTA;
     String _passwordSTA;
+    AsyncWebServer server;
 };
 
 #endif // ESP8266WIFI_H
