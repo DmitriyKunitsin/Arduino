@@ -27,6 +27,7 @@ private:
     String _loginSTA;
     String _passwordSTA;
     AsyncWebServer server;
+    /// @brief IP адрес устройства
     IPAddress deviceIP;
 };
 

@@ -56,12 +56,20 @@ bool MyClassEsp8266::serverOn() {
             <body>
                 <h1>Hello, world!</h1>
                 <p>This is my HTML-page for ESP8266.</p>
-                <button onclick="alert('Клик!')">Click me!</button>
+                <button onclick="alert('Click!')">Click me!</button>
+                <button onclick="fetch('/buttonClicked').then(response => response.text()).then(alert);">
+                    fetch to esp8266!
+                </button>
             </body>
             </html>
         )html";
         request->send(200, "text/html", html);
     });
+    server.on("/buttonClicked", HTTP_GET, [](AsyncWebServerRequest *request){
+        Serial.println("Button was clicked!");
+        request->send(200, "text/plain", "Button click received by ESP8266");
+    });
+
 
     server.begin();
     return true;
