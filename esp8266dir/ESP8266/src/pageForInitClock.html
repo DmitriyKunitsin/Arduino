@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page for login in WiFi or set time</title>
+</head>
+<body>
+    <h1>WiFi</h1>
+    <form id="loginForm">
+        <label for="username">Login:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Set</button>
+    </form>
+
+    <h1>Set current Time</h1>
+    <form id="timeForm">
+        <label for="hours">Hour:</label><br>
+        <input type="number" id="hours" name="hours" min="0" max="23" required><br><br>
+
+        <label for="minutes">Minutes:</label><br>
+        <input type="number" id="minutes" name="minutes" min="0" max="59" required><br><br>
+
+        <button type="submit">Set time</button>
+    </form>
+
+    <script>
+        // Обработка отправки формы логина
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Пример отправки данных на сервер с помощью fetch
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Успех:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+        });
+
+        // Обработка отправки формы установки времени
+        document.getElementById('timeForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Предотвращаем стандартное поведение формы
+
+            const hours = document.getElementById('hours').value;
+            const minutes = document.getElementById('minutes').value;
+
+            // Пример отправки данных на сервер с помощью fetch
+            fetch('/set-time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ hours, minutes }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Успех:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка:', error);
+            });
+        });
+    </script>
+</body>
+</html>
