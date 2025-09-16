@@ -4,6 +4,7 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <Arduino.h> 
+#include <LittleFS.h>
 
 class MyClassEsp8266 {
     

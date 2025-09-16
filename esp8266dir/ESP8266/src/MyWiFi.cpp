@@ -1,7 +1,7 @@
 #include "MyWiFi.h"
 
 MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA)
-    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), server(80), deviceIP(192,168,4,1) {
+    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), server(80), deviceIP(192, 168, 4, 1) {
 }
 
 void MyClassEsp8266::setupWiFiApMode() {
@@ -46,32 +46,48 @@ bool MyClassEsp8266::serverOn() {
     //     return false;
     // }
     // передаем обработчик как лямбду
+    if (!LittleFS.begin()) {
+        Serial.println("LittleFS mout failed");
+        return false;
+    }
     server.on("/hi", HTTP_GET, [](AsyncWebServerRequest *request) {
-        String html = R"html(
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>My page</title>
-            </head>
-            <body>
-                <h1>Hello, world!</h1>
-                <p>This is my HTML-page for ESP8266.</p>
-                <button onclick="alert('Click!')">Click me!</button>
-                <button onclick="fetch('/buttonClicked').then(response => response.text()).then(alert);">
-                    fetch to esp8266!
-                </button>
-            </body>
-            </html>
-        )html";
-        request->send(200, "text/html", html);
+        Serial.println("was request");
+        if (LittleFS.exists("/pageForInitClock.html")) {
+            request->send(LittleFS, "/pageForInitClock.html", "text/html");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
     });
-    server.on("/buttonClicked", HTTP_GET, [](AsyncWebServerRequest *request){
-        Serial.println("Button was clicked!");
-        request->send(200, "text/plain", "Button click received by ESP8266");
-    });
-
+    // server.on("/buttonClicked", HTTP_GET, [](AsyncWebServerRequest *request){
+    //     Serial.println("Button was clicked!");
+    //     request->send(200, "text/plain", "Button click received by ESP8266");
+    // });
 
     server.begin();
+
+    File htmlFile = LittleFS.open("/pageForInitClock.html", "r"); 
+    if(!htmlFile) {
+        Serial.println("was not read file");
+        return false;
+    }
+    String page;
+    while(htmlFile.available()) {
+        String fileLine = htmlFile.readStringUntil('\n');
+        page += fileLine;
+    }
+    htmlFile.close();
+    Serial.println("Listing files in LittleFS:");
+    Dir dir = LittleFS.openDir("/");
+    Serial.print("Cur path : ");
+    Serial.println(dir.fileName());
+    while (dir.next()) {
+        Serial.print("  ");
+        Serial.print(dir.fileName());
+        Serial.print("  SIZE: ");
+        Serial.println(dir.fileSize());
+    }
+
+    Serial.println("Server started. Open http://<ESP_IP>");
     return true;
 }
 
