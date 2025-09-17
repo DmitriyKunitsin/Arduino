@@ -13,7 +13,7 @@ MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_S
 #endif
 bool blink = true;
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     // CustomWiFiModule.setupingTwoModes();
     CustomWiFiModule.setupWiFiApMode();
     CustomWiFiModule.serverOn();
