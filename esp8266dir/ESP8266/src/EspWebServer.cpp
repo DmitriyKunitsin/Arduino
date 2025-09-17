@@ -19,5 +19,24 @@ void EspWebServer::onBody(AsyncWebServerRequest *request, uint8_t *data, size_t 
     if (index + len == total)
     { // проверка не последний ли чанк (конец посылка)
         Serial.println("Recieved body : " + bufferBody);
+
+        JsonDocument fullAnswer, password, login;
+        DeserializationError error = deserializeJson(fullAnswer, bufferBody);
+        // error = deserializeJson(password, fullAnswer["password"]);
+        // error = deserializeJson(login, fullAnswer["username"]);
+        if (error)
+        {
+            Serial.println("deserializeJson error : ");
+            Serial.println(error.f_str());
+            return;
+        }
+
+        const char* pass = fullAnswer["password"];
+        const char* log = fullAnswer["username"];
+
+        Serial.println("Passwod : " + String(pass));
+        Serial.println("Login : " + String(log));
+
+        bufferBody = "";
     }
 }

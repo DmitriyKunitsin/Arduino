@@ -2,6 +2,7 @@
 #define ESPWEBSERVER_H
 
 #include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
 /**
  * @brief Класс для асинхронного веб-сервера на ESP32.
  * Наследует от AsyncWebServer и добавляет кастомные обработчики.
