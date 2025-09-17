@@ -13,3 +13,6 @@ Learning arduino for NGU
 ![alt text](/images/clock_v1.png)
 
 # Clock (часы) [Перешёл на VS Code](/Clock/Clock/)
+
+# ESP8266 (Wemos V1 mini) [WiFi ТЫК](./esp8266dir/ESP8266/)
+## Реализовал на данный момент модуль с просто html формой для указания WiFi к которому подключаться, либо установка времени в ручную в часах, что были описаны выше
