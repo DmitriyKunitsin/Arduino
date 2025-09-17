@@ -3,7 +3,7 @@ void onRequest(AsyncWebServerRequest *request);
 void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 void onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final);
 MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA)
-    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), server(80), deviceIP(192, 168, 4, 1)
+    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1)
 {
 }
 
@@ -52,10 +52,10 @@ bool MyClassEsp8266::setupingTwoModes()
 
 bool MyClassEsp8266::serverOn()
 {
-    // if (WiFi.status() != WL_CONNECTED) {
-    //     return false;
-    // }
-    // передаем обработчик как лямбду
+    // // if (WiFi.status() != WL_CONNECTED) {
+    // //     return false;
+    // // }
+    // // передаем обработчик как лямбду
     if (!LittleFS.begin())
     {
         Serial.println("LittleFS mout failed");
@@ -71,37 +71,37 @@ bool MyClassEsp8266::serverOn()
         } });
 
     server.on("/login", HTTP_POST, onRequest, nullptr, onBody);
-    // server.on("/login", HTTP_POST, [](AsyncWebServerRequest *request)
-    //           {
-    //     Serial.println("Button login was clicked!");
+    // // server.on("/login", HTTP_POST, [](AsyncWebServerRequest *request)
+    // //           {
+    // //     Serial.println("Button login was clicked!");
 
-    //     // Проверяем, есть ли тело запроса
-    //     if (request->hasParam("body", true)) {  // true — для тела
-    //         String body = request->getParam("body", true)->value();
-    //         Serial.println("Body: " + body);
+    // //     // Проверяем, есть ли тело запроса
+    // //     if (request->hasParam("body", true)) {  // true — для тела
+    // //         String body = request->getParam("body", true)->value();
+    // //         Serial.println("Body: " + body);
 
-    //         // Парсим JSON (требуется ArduinoJson)
-    //         DynamicJsonDocument doc(1024);
-    //         DeserializationError error = deserializeJson(doc, body);
-    //         if (error) {
-    //             Serial.println("JSON parse error: " + String(error.c_str()));
-    //             request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
-    //             return;
-    //         }
+    // //         // Парсим JSON (требуется ArduinoJson)
+    // //         DynamicJsonDocument doc(1024);
+    // //         DeserializationError error = deserializeJson(doc, body);
+    // //         if (error) {
+    // //             Serial.println("JSON parse error: " + String(error.c_str()));
+    // //             request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+    // //             return;
+    // //         }
 
-    //         String username = doc["username"];
-    //         String password = doc["password"];
+    // //         String username = doc["username"];
+    // //         String password = doc["password"];
 
-    //         // Здесь можно добавить логику: сохранить WiFi-креды, подключиться и т.д.
-    //         Serial.println("Username: " + username);
-    //         Serial.println("Password: " + password);
+    // //         // Здесь можно добавить логику: сохранить WiFi-креды, подключиться и т.д.
+    // //         Serial.println("Username: " + username);
+    // //         Serial.println("Password: " + password);
 
-    //         // Отправляем ответ
-    //         request->send(200, "application/json", "{\"status\":\"Login data received\"}");
-    //     } else {
-    //         Serial.println("No body");
-    //         request->send(400, "application/json", "{\"error\":\"No body\"}");
-    //     } });
+    // //         // Отправляем ответ
+    // //         request->send(200, "application/json", "{\"status\":\"Login data received\"}");
+    // //     } else {
+    // //         Serial.println("No body");
+    // //         request->send(400, "application/json", "{\"error\":\"No body\"}");
+    // //     } });
 
     server.begin();
     // // Создаём middleware для логирования

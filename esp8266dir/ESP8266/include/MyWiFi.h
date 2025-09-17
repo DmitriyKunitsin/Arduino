@@ -1,17 +1,19 @@
 #ifndef MYWIFI_H
 #define MYWIFI_H
 
-#include <ESPAsyncWebServer.h>
+// #include <ESPAsyncWebServer.h>
+#include <EspWebServer.h>
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
-class MyClassEsp8266 {
-    
+class MyClassEsp8266
+{
+
 public:
-    /// @brief Конструктор инициализирует объект WiFi с указаным логином и паролем 
-    /// @param loginAP логин 
+    /// @brief Конструктор инициализирует объект WiFi с указаным логином и паролем
+    /// @param loginAP логин
     /// @param passwordAP пароль
     MyClassEsp8266(String loginAP, String passwordAP, String loginSTA, String passwordSTA);
     /// @brief метод поднимает точку с WiFi, доступен будет по 192.168.4.1
@@ -28,7 +30,7 @@ private:
     String _passwordAP;
     String _loginSTA;
     String _passwordSTA;
-    AsyncWebServer server;
+    EspWebServer server;
     /// @brief IP адрес устройства
     IPAddress deviceIP;
 };
