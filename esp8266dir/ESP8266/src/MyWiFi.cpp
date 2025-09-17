@@ -58,20 +58,51 @@ bool MyClassEsp8266::serverOn() {
             request->send(404, "text/plain", "File not found");
         }
     });
-    // server.on("/buttonClicked", HTTP_GET, [](AsyncWebServerRequest *request){
-    //     Serial.println("Button was clicked!");
-    //     request->send(200, "text/plain", "Button click received by ESP8266");
-    // });
+    server.on("/login", HTTP_POST, [](AsyncWebServerRequest *request) {
+        Serial.println("Button login was clicked!");
+        // Проверяем, есть ли тело запроса
+        if (request->hasParam("body", true)) {  // true — для тела
+            String body = request->getParam("body", true)->value();
+            Serial.println("Body: " + body);
+
+            // Парсим JSON (требуется ArduinoJson)
+            DynamicJsonDocument doc(1024);
+            DeserializationError error = deserializeJson(doc, body);
+            if (error) {
+                Serial.println("JSON parse error: " + String(error.c_str()));
+                request->send(400, "application/json", "{\"error\":\"Invalid JSON\"}");
+                return;
+            }
+
+            String username = doc["username"];
+            String password = doc["password"];
+
+            // Здесь можно добавить логику: сохранить WiFi-креды, подключиться и т.д.
+            Serial.println("Username: " + username);
+            Serial.println("Password: " + password);
+
+            // Отправляем ответ
+            request->send(200, "application/json", "{\"status\":\"Login data received\"}");
+        } else {
+            Serial.println("No body");
+            request->send(400, "application/json", "{\"error\":\"No body\"}");
+        }
+    });
 
     server.begin();
+    // Создаём middleware для логирования
+    AsyncLoggingMiddleware* logging = new AsyncLoggingMiddleware();
+    logging->setOutput(Serial);  // Вывод в Serial
+    logging->setEnabled(true);
+    server.addMiddleware(logging);  // Добавляем к серверу
 
-    File htmlFile = LittleFS.open("/pageForInitClock.html", "r"); 
-    if(!htmlFile) {
+    File htmlFile = LittleFS.open("/pageForInitClock.html", "r");
+    if (!htmlFile) {
         Serial.println("was not read file");
         return false;
     }
     String page;
-    while(htmlFile.available()) {
+    while (htmlFile.available()) {
         String fileLine = htmlFile.readStringUntil('\n');
         page += fileLine;
     }
@@ -87,7 +118,7 @@ bool MyClassEsp8266::serverOn() {
         Serial.println(dir.fileSize());
     }
 
-    Serial.println("Server started. Open http://<ESP_IP>");
+    Serial.println("Server started. Open http://" + this->deviceIP.toString());
     return true;
 }
 
