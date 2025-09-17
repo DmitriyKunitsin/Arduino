@@ -1,7 +1,7 @@
 #include "MyWiFi.h"
-void onRequest(AsyncWebServerRequest *request);
-void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
-void onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final);
+// // void onRequest(AsyncWebServerRequest *request);
+// // void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+// // void onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final);
 MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA)
     : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1)
 {
@@ -70,7 +70,9 @@ bool MyClassEsp8266::serverOn()
             request->send(404, "text/plain", "File not found");
         } });
 
-    server.on("/login", HTTP_POST, onRequest, nullptr, onBody);
+    server.on("/login", HTTP_POST, [this](AsyncWebServerRequest *request)
+              { server.onRequest(request); }, nullptr, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+              { server.onBody(request, data, len, index, total); });
     // // server.on("/login", HTTP_POST, [](AsyncWebServerRequest *request)
     // //           {
     // //     Serial.println("Button login was clicked!");
@@ -138,45 +140,45 @@ bool MyClassEsp8266::serverOn()
     Serial.println("Server started. Open http://" + this->deviceIP.toString());
     return true;
 }
-/// @brief это основной обработчик, который вызывается после полного получения 
-/// и обработки тела (если onBody задан). 
-/// Он подходит для финальной логики (например, отправки ответа клиенту).
-/// @param request Указатель на запрос.
-void onRequest(AsyncWebServerRequest *request)
-{
-    Serial.println("Input method onRequest");
-}
-/// @brief Обработчик для загрузки файлов (multipart/form-data). Вызывается асинхронно по мере получения файла.
-///        Если загрузка не нужна, передавайте nullptr в server.on().
-///        Файл приходит по чанкам (кусочкам), что позволяет обрабатывать большие файлы без загрузки всего в память.
-/// @param request Указатель на объект запроса AsyncWebServerRequest (для доступа к заголовкам, параметрам и ответу).
-/// @param filename Имя загружаемого файла (из multipart/form-data).
-/// @param index Смещение в файле (позиция, с которой начинается текущий чанк; 0 для первого чанка).
-/// @param data Указатель на байты текущего чанка данных файла.
-/// @param len Длина текущего чанка в байтах.
-/// @param final Флаг завершения: true, если это последний чанк файла (можно выполнить финальную обработку, например, сохранить файл).
-void onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final)
-{
-}
-/// @brief Обработчик тела запроса (request body), вызываемый асинхронно по мере получения данных.
-///        Тело приходит по чанкам (кусочкам), что позволяет обрабатывать большие данные без загрузки всего в память сразу.
-///        Рекомендуется накапливать тело в буфер и выполнять финальную обработку только на последнем чанке (когда index + len == total).
-///        После обработки очистите буфер, чтобы избежать утечек памяти и смешивания данных между запросами.
-/// @param request Указатель на объект запроса AsyncWebServerRequest (для доступа к заголовкам, методу и ответу).
-/// @param data Указатель на массив байтов текущего чанка тела (не null-terminated, используйте len для границ).
-/// @param len Длина текущего чанка в байтах (может быть меньше полного тела).
-/// @param index Смещение в общем теле (позиция, с которой начинается текущий чанк; 0 для первого чанка).
-/// @param total Общий размер тела в байтах (известен заранее, если Content-Length задан).
-void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-    static String bufferBody; // буфер для накопления тела
+// // /// @brief это основной обработчик, который вызывается после полного получения
+// // /// и обработки тела (если onBody задан).
+// // /// Он подходит для финальной логики (например, отправки ответа клиенту).
+// // /// @param request Указатель на запрос.
+// // void onRequest(AsyncWebServerRequest *request)
+// // {
+// //     Serial.println("Input method onRequest");
+// // }
+// // /// @brief Обработчик для загрузки файлов (multipart/form-data). Вызывается асинхронно по мере получения файла.
+// // ///        Если загрузка не нужна, передавайте nullptr в server.on().
+// // ///        Файл приходит по чанкам (кусочкам), что позволяет обрабатывать большие файлы без загрузки всего в память.
+// // /// @param request Указатель на объект запроса AsyncWebServerRequest (для доступа к заголовкам, параметрам и ответу).
+// // /// @param filename Имя загружаемого файла (из multipart/form-data).
+// // /// @param index Смещение в файле (позиция, с которой начинается текущий чанк; 0 для первого чанка).
+// // /// @param data Указатель на байты текущего чанка данных файла.
+// // /// @param len Длина текущего чанка в байтах.
+// // /// @param final Флаг завершения: true, если это последний чанк файла (можно выполнить финальную обработку, например, сохранить файл).
+// // void onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final)
+// // {
+// // }
+// // /// @brief Обработчик тела запроса (request body), вызываемый асинхронно по мере получения данных.
+// // ///        Тело приходит по чанкам (кусочкам), что позволяет обрабатывать большие данные без загрузки всего в память сразу.
+// // ///        Рекомендуется накапливать тело в буфер и выполнять финальную обработку только на последнем чанке (когда index + len == total).
+// // ///        После обработки очистите буфер, чтобы избежать утечек памяти и смешивания данных между запросами.
+// // /// @param request Указатель на объект запроса AsyncWebServerRequest (для доступа к заголовкам, методу и ответу).
+// // /// @param data Указатель на массив байтов текущего чанка тела (не null-terminated, используйте len для границ).
+// // /// @param len Длина текущего чанка в байтах (может быть меньше полного тела).
+// // /// @param index Смещение в общем теле (позиция, с которой начинается текущий чанк; 0 для первого чанка).
+// // /// @param total Общий размер тела в байтах (известен заранее, если Content-Length задан).
+// // void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+// // {
+// //     static String bufferBody; // буфер для накопления тела
 
-    Serial.println("Input method onBody");
-    for(size_t i = 0; i < len; i++) {
-        bufferBody += (char)data[i];
-    }
-    
-    if(index + len == total) { // проверка не последний ли чанк (конец посылка)
-        Serial.println("Recieved body : " + bufferBody);
-    }
-}
+// //     Serial.println("Input method onBody");
+// //     for(size_t i = 0; i < len; i++) {
+// //         bufferBody += (char)data[i];
+// //     }
+
+// //     if(index + len == total) { // проверка не последний ли чанк (конец посылка)
+// //         Serial.println("Recieved body : " + bufferBody);
+// //     }
+// // }
