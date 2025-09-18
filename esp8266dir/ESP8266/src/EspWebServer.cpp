@@ -29,12 +29,19 @@ void EspWebServer::onBody(AsyncWebServerRequest *request, uint8_t *data, size_t 
             return;
         }
 
-        const char* pass = fullAnswer["password"];
-        const char* log = fullAnswer["username"];
+        this->wifiSSID = fullAnswer["username"];
+        this->wifiPassword = fullAnswer["password"];
 
-        Serial.println("Passwod : " + String(pass));
-        Serial.println("Login : " + String(log));
+        Serial.println("Login : " + String(this->wifiSSID));
+        Serial.println("Passwod : " + String(this->wifiPassword));
 
         bufferBody = "";
     }
+}
+
+const char *EspWebServer::getWifiSSID() const
+{
+    if (this->wifiSSID == nullptr)
+        return nullptr;
+    return this->wifiSSID;
 }

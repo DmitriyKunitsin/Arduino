@@ -23,7 +23,9 @@ public:
     /// @return в случае неудачи подклчюения к точки, возвращает false, иначе true
     bool setupingTwoModes();
     bool serverOn();
-
+    /// @brief Метод обращается к приватному серверу и запрашивает у него сохранённый SSID wifi
+    /// @return строку SSID-a
+    const char* getWifiSSID();
 private:
     String _loginAP;
     String _passwordAP;

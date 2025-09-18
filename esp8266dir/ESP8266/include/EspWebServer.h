@@ -45,5 +45,17 @@ public:
      * @param total Общий размер тела в байтах (известен заранее, если Content-Length задан).
      */
     void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    /// @brief Получить SSID Wi-Fi сети.
+    /// Метод возвращает текущий SSID, установленный для подключения к Wi-Fi.
+    /// @return Указатель на строку с SSID (const char*), или nullptr, если SSID не установлена.
+    /// @note Метод является константным и не изменяет состояние объекта.
+    /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
+    const char *getWifiSSID() const;
+
+private:
+    /// @brief SSID WiFi сети, к которой должен подключиться сервер
+    const char *wifiSSID;
+    /// @brief Пароль от WiFi сети, к которой должен подключиться сервер
+    const char *wifiPassword;
 };
 #endif // ESPWEBSERVER_H

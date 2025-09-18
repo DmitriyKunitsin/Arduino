@@ -77,3 +77,7 @@ bool MyClassEsp8266::serverOn()
     Serial.println("Server started. Open http://" + this->deviceIP.toString());
     return true;
 }
+
+const char* MyClassEsp8266::getWifiSSID() {
+    return this->server.getWifiSSID();
+}
