@@ -45,6 +45,33 @@ public:
      * @param total Общий размер тела в байтах (известен заранее, если Content-Length задан).
      */
     void onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    /**
+     * @brief Обрабатывает тело HTTP-запроса для маршрута "/login".
+     *
+     * Метод вызывается при получении каждого чанка тела POST-запроса.
+     * Накопляет данные в буфер и при получении всего тела выполняет парсинг JSON,
+     * извлекает необходимые поля (например, "ssid" и "password") и выполняет соответствующую логику.
+     * @param request Указатель на объект запроса AsyncWebServerRequest, предоставляет доступ к заголовкам, параметрам и возможность отправить ответ.
+     * @param data Указатель на массив байтов текущего чанка тела запроса.
+     *             Данные не null-terminated, длина определяется параметром len.
+     * @param len Длина текущего чанка в байтах.
+     * @param index Смещение текущего чанка в общем теле запроса (0 для первого чанка).
+     * @param total Общий размер тела запроса в байтах (если известен, например, из заголовка Content-Length).
+     */
+    void handleLoginBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    /**
+     * @brief Обрабатывает тело HTTP-запроса для маршрута "/set-time".
+     * Аналогично handleLoginBody, метод вызывается при получении каждого чанка тела POST-запроса.
+     * Накопляет тело, при полном получении парсит JSON и извлекает поле "time",
+     * после чего выполняет необходимую обработку (например, обновление времени устройства).
+     * @param request Указатель на объект запроса AsyncWebServerRequest, предоставляет доступ к заголовкам, параметрам и возможность отправить ответ.
+     * @param data Указатель на массив байтов текущего чанка тела запроса.
+     *             Данные не null-terminated, длина определяется параметром len.
+     * @param len Длина текущего чанка в байтах.
+     * @param index Смещение текущего чанка в общем теле запроса (0 для первого
+     * @param total Общий размер тела в байтах (известен заранее, если Content-Length задан).
+     */
+    void handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
     /// @brief Получить SSID Wi-Fi сети.
     /// Метод возвращает текущий SSID, установленный для подключения к Wi-Fi.
     /// @return Указатель на строку с SSID (const char*), или nullptr, если SSID не установлена.
@@ -57,5 +84,9 @@ private:
     const char *wifiSSID;
     /// @brief Пароль от WiFi сети, к которой должен подключиться сервер
     const char *wifiPassword;
+    /// @brief Полученный час с клиента
+    const char *setHour;
+    /// @brief Полученные минуты с клиента
+    const char *setMinute;
 };
 #endif // ESPWEBSERVER_H

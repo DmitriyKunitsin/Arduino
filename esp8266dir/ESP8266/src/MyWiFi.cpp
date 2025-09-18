@@ -66,7 +66,9 @@ bool MyClassEsp8266::serverOn()
     server.on("/login", HTTP_POST, [this](AsyncWebServerRequest *request)
               { server.onRequest(request); }, nullptr, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
               { server.onBody(request, data, len, index, total); });
-   
+    server.on("/set-time", HTTP_POST, [this](AsyncWebServerRequest *request)
+              { server.onRequest(request); }, nullptr, [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+              { server.onBody(request, data, len, index, total); });
     server.begin();
     // // Создаём middleware для логирования
     // // AsyncLoggingMiddleware *logging = new AsyncLoggingMiddleware();
