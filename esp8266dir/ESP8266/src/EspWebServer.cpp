@@ -22,8 +22,6 @@ void EspWebServer::onBody(AsyncWebServerRequest *request, uint8_t *data, size_t 
 
         JsonDocument fullAnswer, password, login;
         DeserializationError error = deserializeJson(fullAnswer, bufferBody);
-        // error = deserializeJson(password, fullAnswer["password"]);
-        // error = deserializeJson(login, fullAnswer["username"]);
         if (error)
         {
             Serial.println("deserializeJson error : ");
