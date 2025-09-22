@@ -5,7 +5,10 @@
 #include <EspWebServer.h>
 #include <Arduino.h>
 #include <LittleFS.h>
- 
+#include <TimeManager.hpp>
+// #include <NTPClient.h>
+// #include <WiFiUdp.h>
+
 class MyClassEsp8266
 {
 

@@ -12,13 +12,17 @@ MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_S
 #define LED_BUILTIN
 #endif
 bool blink = true;
+
+WiFiUDP ntpUDP;
+TimeManager timeClient(ntpUDP);
+
 void setup()
 {
     Serial.begin(115200);
     CustomWiFiModule.setupingTwoModes();
     // CustomWiFiModule.initAPmode();
     CustomWiFiModule.serverOn();
-
+    timeClient.begin();
     pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -42,4 +46,6 @@ void loop()
         digitalWrite(LED_BUILTIN, true);
     }
     delay(250);
+    timeClient.update();
+    Serial.println(timeClient.GetFormattedTimeForDisplay());
 }
