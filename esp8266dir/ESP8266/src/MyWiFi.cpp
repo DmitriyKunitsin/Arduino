@@ -1,14 +1,12 @@
 #include "MyWiFi.h"
-MyClassEsp8266::MyClassEsp8266(String login, String password, String logSTA, String passSTA)
+MyClassEsp8266::MyClassEsp8266(char* login, char* password, String logSTA, String passSTA)
     : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1)
 {
 }
 
-void MyClassEsp8266::setupWiFiApMode()
-{
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP(this->_loginAP, this->_passwordAP);
-    Serial.println("init AP mode");
+void MyClassEsp8266::initAPmode() {
+    Serial.println("InitAPPPPPPPP");
+    this->server.setupWiFiApMode(this->_loginAP , this->_passwordAP);
 }
 
 void MyClassEsp8266::setupWiFiSTAMode()
@@ -21,7 +19,7 @@ void MyClassEsp8266::setupWiFiSTAMode()
 bool MyClassEsp8266::setupingTwoModes()
 {
     WiFi.mode(WIFI_AP_STA);
-    if (!_loginAP.length() || !_passwordAP.length() || !_loginSTA.length() || !_passwordSTA.length())
+    if (!_loginSTA.length() || !_passwordSTA.length())
     {
         // Если хотя бы одна пустая, возвращаем false (не готовы)
         return false;

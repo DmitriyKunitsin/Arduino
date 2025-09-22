@@ -16,6 +16,10 @@ public:
     EspWebServer() : AsyncWebServer(80)
     {
     }
+    /// @brief метод поднимает точку с WiFi, доступен будет по 192.168.4.1
+    /// @param loginAP логин Acces poin точки (имя по которому искать)
+    /// @param passwodAP пароль Acces poin точки (пароль который вводить)
+    void setupWiFiApMode(const char* const loginAP, const char* const paswwodAP);
     /**
      * @brief это основной обработчик, который вызывается после полного получения
      * и обработки тела (если onBody задан).
@@ -78,7 +82,9 @@ public:
     /// @note Метод является константным и не изменяет состояние объекта.
     /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
     const char *getWifiSSID() const;
-
+    /// @brief Пробует подключиться к указанному WiFi
+    /// @return true в случае успеха, иначе false
+    bool tryConnectedToSTA();
 private:
     /// @brief SSID WiFi сети, к которой должен подключиться сервер
     const char *wifiSSID;
@@ -88,5 +94,9 @@ private:
     const char *setHour;
     /// @brief Полученные минуты с клиента
     const char *setMinute;
+    /// @brief Логин режима Acess point
+    const char *login_AP_MODE;
+    /// @brief пароль режима Acess point
+    const char *passwod_AP_MODE;
 };
 #endif // ESPWEBSERVER_H

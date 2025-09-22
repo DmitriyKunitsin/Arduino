@@ -1,7 +1,7 @@
 #include <MyWiFi.h>
 
-const char* _LOGIN_AP = "AP_DIMA_K";
-const char* _PASSWORD_AP = "PASSWORD";
+char* _LOGIN_AP = "APPPPPP_DIMA_K";
+char* _PASSWORD_AP = "PASSWORD";
 
 const char* _LOGIN_STA = "Xiaomi_1C16";
 const char* _PASSWORD_STA = "20081111";
@@ -15,9 +15,9 @@ bool blink = true;
 void setup() {
     Serial.begin(115200);
     // CustomWiFiModule.setupingTwoModes();
-    CustomWiFiModule.setupWiFiApMode();
+    CustomWiFiModule.initAPmode();
     CustomWiFiModule.serverOn();
-
+    
     pinMode(LED_BUILTIN, OUTPUT);
 }
 

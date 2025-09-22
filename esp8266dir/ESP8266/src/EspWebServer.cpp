@@ -88,3 +88,21 @@ const char *EspWebServer::getWifiSSID() const
         return nullptr;
     return this->wifiSSID;
 }
+
+bool EspWebServer::tryConnectedToSTA()
+{
+    if (this->wifiSSID == nullptr && this->wifiPassword == nullptr)
+    {
+        return false;
+    }
+    return true;
+}
+
+void EspWebServer::setupWiFiApMode(const char* const loginAP, const char* const paswwodAP)
+{
+    WiFi.mode(WIFI_AP);
+    this->login_AP_MODE = loginAP;
+    this->passwod_AP_MODE = paswwodAP;
+    WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
+    Serial.println("init AP mode");
+}
