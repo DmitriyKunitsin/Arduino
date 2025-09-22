@@ -1,6 +1,7 @@
 #include "MyWiFi.h"
-MyClassEsp8266::MyClassEsp8266(const char *const login, const char *const password, const char *logSTA, const char *passSTA)
-    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1)
+MyClassEsp8266::MyClassEsp8266(const char *const login, const char *const password,
+                               const char *logSTA, const char *passSTA, WiFiUDP &udpInstance)
+    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1), timer(udpInstance)
 {
     Serial.println("init construct class for module WiFi");
 }

@@ -6,15 +6,15 @@ const char *_PASSWORD_AP = "PASSWORD";
 const char *_LOGIN_STA = "DimaAP";
 const char *_PASSWORD_STA = "ssaf2866";
 
-MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_STA);
+WiFiUDP ntpUDP;
+MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_STA, ntpUDP);
 
 #ifndef LED_BUILTIN
 #define LED_BUILTIN
 #endif
 bool blink = true;
 
-WiFiUDP ntpUDP;
-TimeManager timeClient(ntpUDP);
+// TimeManager timeClient(ntpUDP);
 
 void setup()
 {
@@ -22,7 +22,7 @@ void setup()
     CustomWiFiModule.setupingTwoModes();
     // CustomWiFiModule.initAPmode();
     CustomWiFiModule.serverOn();
-    timeClient.begin();
+    // timeClient.begin();
     pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -46,6 +46,6 @@ void loop()
         digitalWrite(LED_BUILTIN, true);
     }
     delay(250);
-    timeClient.update();
-    Serial.println(timeClient.GetFormattedTimeForDisplay());
+    // timeClient.update();
+    // Serial.println(timeClient.GetFormattedTimeForDisplay());
 }

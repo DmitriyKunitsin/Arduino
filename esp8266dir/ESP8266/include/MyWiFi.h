@@ -16,7 +16,8 @@ public:
     /// @brief Конструктор инициализирует объект WiFi с указаным логином и паролем
     /// @param loginAP логин
     /// @param passwordAP пароль
-    MyClassEsp8266(const char *const loginAP, const char *const passwordAP, const char * loginSTA, const char * passwordSTA);
+    MyClassEsp8266(const char *const loginAP, const char *const passwordAP,
+                   const char *loginSTA, const char *passwordSTA, WiFiUDP &udpInstance);
     /// @brief иницирует Acess poin режим
     void initAPmode();
     /// @brief метод инициализирует модуль и пытается подключиться к переданному вай фай
@@ -46,13 +47,13 @@ public:
         };
         return lambda;
     }
-
 private:
     const char *_loginAP;
     const char *_passwordAP;
     const char *_loginSTA;
     const char *_passwordSTA;
     EspWebServer server;
+    TimeManager timer;
     /// @brief IP адрес устройства
     IPAddress deviceIP;
 };
