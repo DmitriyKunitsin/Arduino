@@ -51,16 +51,6 @@ void EspWebServer::handleLoginBody(AsyncWebServerRequest *request, uint8_t *data
 
         bufferBody = "";
         this->isConnWifi = true;
-        // yield();
-        // if (this->tryConnectedToSTA())
-        // {
-        //     Serial.println("Succerful connected to Wifi : " + String(this->wifiSSID));
-        // }
-        // else
-        // {
-        //     Serial.println("Aborted connected to Wifi : " + String(this->wifiSSID));
-        // }
-        // yield();
     }
 }
 void EspWebServer::handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)

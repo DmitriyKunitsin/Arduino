@@ -43,7 +43,7 @@ bool MyClassEsp8266::setupingTwoModes()
     else
     {
         Serial.println("Failed to connect to WiFi after multiple attempts");
-        initAPmode();
+        // initAPmode();
         return false;
     }
 }
