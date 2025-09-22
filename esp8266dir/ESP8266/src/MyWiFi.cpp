@@ -90,3 +90,6 @@ const char *MyClassEsp8266::getWifiPassword()
 {
     return this->server.getWifiPassword();
 }
+String MyClassEsp8266::getNetworksTimeFormattedDislpay() {
+    return this->timer.GetFormattedTimeForDisplay();
+}

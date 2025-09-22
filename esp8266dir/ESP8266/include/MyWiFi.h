@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <TimeManager.hpp>
+#include <SoftwareSerial.h>
 // #include <NTPClient.h>
 // #include <WiFiUdp.h>
 
@@ -47,15 +48,16 @@ public:
         };
         return lambda;
     }
+    String getNetworksTimeFormattedDislpay();
 private:
     const char *_loginAP;
     const char *_passwordAP;
     const char *_loginSTA;
     const char *_passwordSTA;
     EspWebServer server;
-    TimeManager timer;
     /// @brief IP адрес устройства
     IPAddress deviceIP;
+    TimeManager timer;
 };
 
 #endif // ESP8266WIFI_H

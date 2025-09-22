@@ -16,6 +16,13 @@ bool blink = true;
 
 // TimeManager timeClient(ntpUDP);
 
+// // // Порты для связи с Arduino Nano
+// // const int rxPin = 1;  // Pin для RX (приёма данных)
+// // const int txPin = 3;  // Pin для TX (передачи данных)
+
+// // // Создаем объект SoftwareSerial
+// // SoftwareSerial mySerial(rxPin, txPin); // RX, TX
+
 void setup()
 {
     Serial.begin(115200);
@@ -38,6 +45,7 @@ void loop()
         if (CustomWiFiModule.ConnectedToWIfi())
         {
             Serial.println("Succerful connect to WiFi");
+            Serial.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
         }
         else
         {
