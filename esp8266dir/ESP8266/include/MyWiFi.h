@@ -6,9 +6,11 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <TimeManager.hpp>
-#include <SoftwareSerial.h>
+#include <SoftwareSerial.h> // https://github.com/plerup/espsoftwareserial/
 // #include <NTPClient.h>
 // #include <WiFiUdp.h>
+
+
 
 class MyClassEsp8266
 {
