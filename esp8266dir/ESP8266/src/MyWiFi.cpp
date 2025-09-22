@@ -19,46 +19,15 @@ bool MyClassEsp8266::ConnectedToWIfi()
 bool MyClassEsp8266::setupingTwoModes()
 {
     WiFi.enableInsecureWEP(false);
-    WiFi.mode(WIFI_STA);
+    WiFi.mode(WIFI_AP_STA);
     WiFi.setPhyMode(WIFI_PHY_MODE_11G);
     WiFi.disconnect();
-    // if (this->getWifiSSID() == nullptr || this->getWifiPassword() == nullptr)
-    // {
-    //     Serial.print("Кто-то был пуст");
-    //     // Если хотя бы одна пустая, возвращаем false (не готовы)
-    //     return false;
-    // }
-    // WiFi.softAP(this->_loginAP, this->_passwordAP);
-    int n = WiFi.scanNetworks();
-    if (n == 0)
-    {
-        Serial.println("Сети не найдены");
-    }
-    else
-    {
-        Serial.println(n);
-        Serial.println("  сетей найдено");
-        for (int i = 0; i < n; i++)
-        {
-            Serial.print(i + 1);
-            Serial.print(": ");
-            Serial.print(WiFi.SSID(i));
-            Serial.print("\t");
-            Serial.print(WiFi.RSSI(i));
-            Serial.println("  dBm");
-        }
-    }
-    if (WiFi.begin(this->_loginSTA, this->_passwordSTA))
-    {
-        Serial.println("begin == true");
-    }
-    else
-    {
-        Serial.println("begin == false");
-    }
+    WiFi.softAP(this->_loginAP, this->_passwordAP);
+    this->server.GetAndCheckSumAccessPoints();
+    WiFi.begin(this->_loginSTA, this->_passwordSTA);
     int countTry = 0;
     Serial.println("Connecting to Wifi " + String(this->_loginSTA));
-    while (WiFi.status() != WL_CONNECTED && countTry <= 30) // увеличил максимум попыток до 20
+    while (WiFi.status() != WL_CONNECTED && countTry <= 30)
     {
         Serial.println("Try connecting " + String(countTry));
         delay(500);

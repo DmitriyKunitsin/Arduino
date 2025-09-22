@@ -17,7 +17,7 @@ void setup()
     Serial.begin(115200);
     CustomWiFiModule.setupingTwoModes();
     // CustomWiFiModule.initAPmode();
-    // CustomWiFiModule.serverOn();
+    CustomWiFiModule.serverOn();
 
     pinMode(LED_BUILTIN, OUTPUT);
 }
@@ -30,6 +30,7 @@ void loop()
     bool result = func();                             // Вычисляем результат
     if (result)
     {
+        digitalWrite(LED_BUILTIN, false);
         if (CustomWiFiModule.ConnectedToWIfi())
         {
             Serial.println("Succerful connect to WiFi");
@@ -38,6 +39,7 @@ void loop()
         {
             Serial.println("Aborted connect to WiFi");
         }
+        digitalWrite(LED_BUILTIN, true);
     }
-    delay(1000);
+    delay(250);
 }

@@ -14,7 +14,7 @@ public:
     /**
      * @brief Конструктор по умолчанию, инициализирует сервер на порту 80.
      */
-    EspWebServer(): AsyncWebServer(80)
+    EspWebServer() : AsyncWebServer(80)
     {
         wifiSSID = nullptr;
         wifiPassword = nullptr;
@@ -22,12 +22,28 @@ public:
         passwod_AP_MODE = nullptr;
         isConnWifi = false;
     }
-    /// @brief 
+    /** @brief Инициализирует устройство в режиме станции (STA),
+     * пытаясь подключиться к точке доступа с указанными учётными данными.
+     * Данный метод настраивает модуль ESP8266 в режиме "клиентской" точки доступа (station mode),
+     * пытаясь подключиться к внешней точке доступа с указанным именем и паролем.
+     * @param loginAP Имя точки доступа (SSID), к которой нужно подключиться.
+     * @param paswwodAP Пароль точки доступа, необходимый для аутентификации.
+     */
     void setupWiFiSTAmode(const char *const loginAP, const char *const paswwodAP);
-    /// @brief метод поднимает точку с WiFi, доступен будет по 192.168.4.1
-    /// @param loginAP логин Acces poin точки (имя по которому искать)
-    /// @param passwodAP пароль Acces poin точки (пароль который вводить)
-    void setupWiFiApMode(const char* const loginAP, const char* const paswwodAP);
+
+    /** @brief Запускает режим точки доступа (Access Point, AP), создавая собственную Wi-Fi сеть.
+     * Метод создает виртуальную точку доступа, позволяющую устройствам подключаться к данному ESP8266.
+     * По умолчанию создается открытая сеть с указанным именем и паролем, доступной по адресу 192.168.4.1.
+     * @param loginAP Имя создаваемой точки доступа (SSID), видимое окружающим устройствам.
+     * @param passwodAP Пароль точки доступа, обязательный для доступа к созданной сети.
+     */
+    void setupWiFiApMode(const char *const loginAP, const char *const passwodAP);
+    /**
+     * @brief Возвращает колличество доступных точек для подключения и выводит в Serial информацию о них
+     * 
+     * @return int 
+     */
+    int GetAndCheckSumAccessPoints();
     /**
      * @brief это основной обработчик, который вызывается после полного получения
      * и обработки тела (если onBody задан).
@@ -96,6 +112,7 @@ public:
     bool tryConnectedToSTA();
 
     bool isConnWifi;
+
 private:
     /// @brief SSID WiFi сети, к которой должен подключиться сервер
     const char *wifiSSID;

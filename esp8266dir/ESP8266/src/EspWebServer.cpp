@@ -99,9 +99,10 @@ const char *EspWebServer::getWifiSSID() const
         return nullptr;
     return this->wifiSSID;
 }
-const char *EspWebServer::getWifiPassword() const {
-    if(this->wifiPassword == nullptr)
-        return nullptr; 
+const char *EspWebServer::getWifiPassword() const
+{
+    if (this->wifiPassword == nullptr)
+        return nullptr;
     return this->wifiPassword;
 }
 bool EspWebServer::tryConnectedToSTA()
@@ -132,7 +133,13 @@ bool EspWebServer::tryConnectedToSTA()
     this->isConnWifi = false;
     return (WiFi.status() == WL_CONNECTED);
 }
-void EspWebServer::setupWiFiSTAmode(const char *const SSID, const char *const PASSWORD) {
+void EspWebServer::setupWiFiSTAmode(const char *const SSID, const char *const PASSWORD)
+{
+    if (SSID == nullptr || PASSWORD == nullptr)
+    {
+        Serial.println("NOT initialization STA mode");
+        return;
+    }
     WiFi.mode(WIFI_STA);
     this->wifiSSID = SSID;
     this->wifiPassword = PASSWORD;
@@ -151,4 +158,28 @@ void EspWebServer::setupWiFiApMode(const char *const loginAP, const char *const 
     this->passwod_AP_MODE = paswwodAP;
     WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
     Serial.println("initialization Acess Point mode");
+}
+
+int EspWebServer::GetAndCheckSumAccessPoints()
+{
+    int countWiFiAccessPoints = WiFi.scanNetworks();
+    if (countWiFiAccessPoints == 0)
+    {
+        Serial.println("Сети не найдены");
+    }
+    else
+    {
+        Serial.println(countWiFiAccessPoints);
+        Serial.println("  сетей найдено");
+        for (int i = 0; i < countWiFiAccessPoints; i++)
+        {
+            Serial.print(i + 1);
+            Serial.print(": ");
+            Serial.print(WiFi.SSID(i));
+            Serial.print("\t");
+            Serial.print(WiFi.RSSI(i));
+            Serial.println("  dBm");
+        }
+    }
+    return countWiFiAccessPoints;
 }
