@@ -3,8 +3,8 @@
 const char *_LOGIN_AP = "AP_DIMA_K";
 const char *_PASSWORD_AP = "PASSWORD";
 
-const char *_LOGIN_STA = "DimaAP";
-const char *_PASSWORD_STA = "ssaf2866";
+const char *_LOGIN_STA = "Xiaomi_1C16"; // home : Xiaomi_1C16
+const char *_PASSWORD_STA = "20081111";
 
 WiFiUDP ntpUDP;
 MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_STA, ntpUDP);
@@ -22,25 +22,27 @@ bool blink = true;
 
 // // // Создаем объект SoftwareSerial
 // // SoftwareSerial mySerial(rxPin, txPin); // RX, TX
-#define MYPORT_TX 1
-#define MYPORT_RX 3
-EspSoftwareSerial::UART myPort;
+// #define MYPORT_TX 1
+// #define MYPORT_RX 3
+// EspSoftwareSerial::UART myPort;
 
 void setup()
 {
     Serial.begin(115200);
+    Serial.println("next step setup modes");
     CustomWiFiModule.setupingTwoModes();
+    Serial.println("next step serverOn");
     CustomWiFiModule.serverOn();
 
-    myPort.begin(115200, SWSERIAL_8N1, MYPORT_RX, MYPORT_TX, false);
-    if (!myPort)
-    {
-        Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
-        while (1)
-        { // Don't continue with invalid configuration
-            delay(1000);
-        }
-    }
+    // myPort.begin(115200, SWSERIAL_8N1, MYPORT_RX, MYPORT_TX, false);
+    // if (!myPort)
+    // {
+    //     Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
+    //     while (1)
+    //     { // Don't continue with invalid configuration
+    //         delay(1000);
+    //     }
+    // }
 
     pinMode(LED_BUILTIN, OUTPUT);
 }
@@ -58,7 +60,7 @@ void loop()
         {
             Serial.println("Succerful connect to WiFi");
             Serial.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
-            myPort.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
+            // myPort.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
         }
         else
         {

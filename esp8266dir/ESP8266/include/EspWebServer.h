@@ -30,7 +30,10 @@ public:
      * @param paswwodAP Пароль точки доступа, необходимый для аутентификации.
      */
     void setupWiFiSTAmode(const char *const loginAP, const char *const paswwodAP);
-
+    /**
+     * 
+     */
+    void setupTwoModes(const char *const loginAP, const char *const paswwodAP, const char *const SSID, const char *const PASSWORD);
     /** @brief Запускает режим точки доступа (Access Point, AP), создавая собственную Wi-Fi сеть.
      * Метод создает виртуальную точку доступа, позволяющую устройствам подключаться к данному ESP8266.
      * По умолчанию создается открытая сеть с указанным именем и паролем, доступной по адресу 192.168.4.1.
