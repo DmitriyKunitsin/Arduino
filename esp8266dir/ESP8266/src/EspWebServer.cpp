@@ -50,6 +50,17 @@ void EspWebServer::handleLoginBody(AsyncWebServerRequest *request, uint8_t *data
         Serial.println("Passwod : " + String(this->wifiPassword));
 
         bufferBody = "";
+        this->isConnWifi = true;
+        // yield();
+        // if (this->tryConnectedToSTA())
+        // {
+        //     Serial.println("Succerful connected to Wifi : " + String(this->wifiSSID));
+        // }
+        // else
+        // {
+        //     Serial.println("Aborted connected to Wifi : " + String(this->wifiSSID));
+        // }
+        // yield();
     }
 }
 void EspWebServer::handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
@@ -88,21 +99,56 @@ const char *EspWebServer::getWifiSSID() const
         return nullptr;
     return this->wifiSSID;
 }
-
+const char *EspWebServer::getWifiPassword() const {
+    if(this->wifiPassword == nullptr)
+        return nullptr; 
+    return this->wifiPassword;
+}
 bool EspWebServer::tryConnectedToSTA()
 {
     if (this->wifiSSID == nullptr && this->wifiPassword == nullptr)
     {
         return false;
     }
-    return true;
+    WiFi.mode(WIFI_AP_STA);
+    WiFi.setPhyMode(WIFI_PHY_MODE_11G);
+    WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
+    Serial.println("Conntecting to WiFi : " + String(this->wifiSSID));
+    WiFi.disconnect();
+    WiFi.begin(this->wifiSSID, this->wifiPassword);
+    byte countTry = 0; /// колличество попыток подключения
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.println("Try connecting : " + String(countTry) + " waiting 500 ms...");
+        if (countTry >= 0x0A) // 10
+        {
+            this->isConnWifi = false;
+            break;
+            return false;
+        }
+        countTry++;
+    }
+    this->isConnWifi = false;
+    return (WiFi.status() == WL_CONNECTED);
 }
-
-void EspWebServer::setupWiFiApMode(const char* const loginAP, const char* const paswwodAP)
+void EspWebServer::setupWiFiSTAmode(const char *const SSID, const char *const PASSWORD) {
+    WiFi.mode(WIFI_STA);
+    this->wifiSSID = SSID;
+    this->wifiPassword = PASSWORD;
+    WiFi.begin(this->wifiSSID, this->wifiPassword);
+    Serial.println("initialization STA mode");
+}
+void EspWebServer::setupWiFiApMode(const char *const loginAP, const char *const paswwodAP)
 {
+    if (loginAP == nullptr || paswwodAP == nullptr)
+    {
+        Serial.println("NOT initialization Acess Point mode");
+        return;
+    }
     WiFi.mode(WIFI_AP);
     this->login_AP_MODE = loginAP;
     this->passwod_AP_MODE = paswwodAP;
     WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
-    Serial.println("init AP mode");
+    Serial.println("initialization Acess Point mode");
 }

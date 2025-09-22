@@ -1,48 +1,82 @@
 #include "MyWiFi.h"
-MyClassEsp8266::MyClassEsp8266(char* login, char* password, String logSTA, String passSTA)
+MyClassEsp8266::MyClassEsp8266(const char *const login, const char *const password, const char *logSTA, const char *passSTA)
     : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1)
 {
+    Serial.println("init construct class for module WiFi");
 }
-
-void MyClassEsp8266::initAPmode() {
-    Serial.println("InitAPPPPPPPP");
-    this->server.setupWiFiApMode(this->_loginAP , this->_passwordAP);
-}
-
-void MyClassEsp8266::setupWiFiSTAMode()
+void MyClassEsp8266::initAPmode()
 {
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(this->_loginSTA, this->_passwordSTA);
-    Serial.println("init STA mode");
+    this->server.setupWiFiApMode(this->_loginAP, this->_passwordAP);
 }
-
+void MyClassEsp8266::initWiFiSTAMode()
+{
+    this->server.setupWiFiSTAmode(this->_loginSTA, this->_passwordSTA);
+}
+bool MyClassEsp8266::ConnectedToWIfi()
+{
+    return this->server.tryConnectedToSTA();
+}
 bool MyClassEsp8266::setupingTwoModes()
 {
-    WiFi.mode(WIFI_AP_STA);
-    if (!_loginSTA.length() || !_passwordSTA.length())
+    WiFi.enableInsecureWEP(false);
+    WiFi.mode(WIFI_STA);
+    WiFi.setPhyMode(WIFI_PHY_MODE_11G);
+    WiFi.disconnect();
+    // if (this->getWifiSSID() == nullptr || this->getWifiPassword() == nullptr)
+    // {
+    //     Serial.print("Кто-то был пуст");
+    //     // Если хотя бы одна пустая, возвращаем false (не готовы)
+    //     return false;
+    // }
+    // WiFi.softAP(this->_loginAP, this->_passwordAP);
+    int n = WiFi.scanNetworks();
+    if (n == 0)
     {
-        // Если хотя бы одна пустая, возвращаем false (не готовы)
-        return false;
+        Serial.println("Сети не найдены");
     }
-    WiFi.softAP(this->_loginAP, this->_passwordAP);
-    WiFi.begin(this->_loginSTA, this->_passwordSTA);
-    int countTry = 0;
-    Serial.print("Connecting to Wifi " + this->_loginSTA);
-    while (WiFi.status() != WL_CONNECTED)
-    { // если не подключены
-        delay(500);
-        Serial.println("Try connecting " + countTry);
-        countTry++;
-        if (countTry == 10)
+    else
+    {
+        Serial.println(n);
+        Serial.println("  сетей найдено");
+        for (int i = 0; i < n; i++)
         {
-            break;
-            return false;
+            Serial.print(i + 1);
+            Serial.print(": ");
+            Serial.print(WiFi.SSID(i));
+            Serial.print("\t");
+            Serial.print(WiFi.RSSI(i));
+            Serial.println("  dBm");
         }
     }
-    Serial.println("Connecting succerful!");
-    Serial.print("IP address : ");
-    Serial.println(WiFi.localIP());
-    return true;
+    if (WiFi.begin(this->_loginSTA, this->_passwordSTA))
+    {
+        Serial.println("begin == true");
+    }
+    else
+    {
+        Serial.println("begin == false");
+    }
+    int countTry = 0;
+    Serial.println("Connecting to Wifi " + String(this->_loginSTA));
+    while (WiFi.status() != WL_CONNECTED && countTry <= 30) // увеличил максимум попыток до 20
+    {
+        Serial.println("Try connecting " + String(countTry));
+        delay(500);
+        countTry++;
+    }
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        Serial.println("Connecting successful!");
+        Serial.print("IP address : ");
+        Serial.println(WiFi.localIP());
+        return true;
+    }
+    else
+    {
+        Serial.println("Failed to connect to WiFi after multiple attempts");
+        initAPmode();
+        return false;
+    }
 }
 
 bool MyClassEsp8266::serverOn()
@@ -78,6 +112,11 @@ bool MyClassEsp8266::serverOn()
     return true;
 }
 
-const char* MyClassEsp8266::getWifiSSID() {
+const char *MyClassEsp8266::getWifiSSID()
+{
     return this->server.getWifiSSID();
+}
+const char *MyClassEsp8266::getWifiPassword()
+{
+    return this->server.getWifiPassword();
 }

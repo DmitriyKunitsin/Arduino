@@ -3,6 +3,7 @@
 
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include <ESP8266WiFi.h>
 /**
  * @brief Класс для асинхронного веб-сервера на ESP32.
  * Наследует от AsyncWebServer и добавляет кастомные обработчики.
@@ -13,9 +14,16 @@ public:
     /**
      * @brief Конструктор по умолчанию, инициализирует сервер на порту 80.
      */
-    EspWebServer() : AsyncWebServer(80)
+    EspWebServer(): AsyncWebServer(80)
     {
+        wifiSSID = nullptr;
+        wifiPassword = nullptr;
+        login_AP_MODE = nullptr;
+        passwod_AP_MODE = nullptr;
+        isConnWifi = false;
     }
+    /// @brief 
+    void setupWiFiSTAmode(const char *const loginAP, const char *const paswwodAP);
     /// @brief метод поднимает точку с WiFi, доступен будет по 192.168.4.1
     /// @param loginAP логин Acces poin точки (имя по которому искать)
     /// @param passwodAP пароль Acces poin точки (пароль который вводить)
@@ -82,9 +90,12 @@ public:
     /// @note Метод является константным и не изменяет состояние объекта.
     /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
     const char *getWifiSSID() const;
+    const char *getWifiPassword() const;
     /// @brief Пробует подключиться к указанному WiFi
     /// @return true в случае успеха, иначе false
     bool tryConnectedToSTA();
+
+    bool isConnWifi;
 private:
     /// @brief SSID WiFi сети, к которой должен подключиться сервер
     const char *wifiSSID;
