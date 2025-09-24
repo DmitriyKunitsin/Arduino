@@ -14,34 +14,12 @@ MyClassEsp8266 CustomWiFiModule(_LOGIN_AP, _PASSWORD_AP, _LOGIN_STA, _PASSWORD_S
 #endif
 bool blink = true;
 
-// TimeManager timeClient(ntpUDP);
-
-// // // Порты для связи с Arduino Nano
-// // const int rxPin = 1;  // Pin для RX (приёма данных)
-// // const int txPin = 3;  // Pin для TX (передачи данных)
-
-// // // Создаем объект SoftwareSerial
-// // SoftwareSerial mySerial(rxPin, txPin); // RX, TX
-// #define MYPORT_TX 1
-// #define MYPORT_RX 3
-// EspSoftwareSerial::UART myPort;
-
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
     Serial.println("next step setup modes");
     CustomWiFiModule.setupingTwoModes();
     Serial.println("next step serverOn");
     CustomWiFiModule.serverOn();
-
-    // myPort.begin(115200, SWSERIAL_8N1, MYPORT_RX, MYPORT_TX, false);
-    // if (!myPort)
-    // {
-    //     Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
-    //     while (1)
-    //     { // Don't continue with invalid configuration
-    //         delay(1000);
-    //     }
-    // }
 
     pinMode(LED_BUILTIN, OUTPUT);
 }
@@ -70,7 +48,7 @@ void loop() {
         if (cnt % 25 == 0) {
             // Serial.print("Conncted device : ");
             // Serial.print(numClients);
-            Serial.print("s1e");
+            Serial.print("\x02Hello\x03");
         }
     } else {
         delayTimer = 250;

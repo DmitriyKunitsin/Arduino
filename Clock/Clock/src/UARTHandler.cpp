@@ -53,8 +53,16 @@ void UARTHandler::asyncTransmit(unsigned char data) {
 
     enableUDRIE();
 }
-void UARTHandler::AsyncStringTransmit(unsigned char* data, unsigned int len_data) {
-    for (unsigned int i = 0; i < len_data; i++) {
+size_t strlen(const unsigned char* const str) {
+    const unsigned char* s = str;
+    while (*s != '\n') {
+        s++;
+    }
+    return s - str;
+}
+void UARTHandler::AsyncStringTransmit(const unsigned char* const data) {
+    unsigned int len = strlen(data);
+    for (unsigned int i = 0; i < len; i++) {
         asyncTransmit(data[i]);
     }
 }

@@ -97,7 +97,7 @@ class UARTHandler {
      * @param data
      * @param len_data
      */
-    void AsyncStringTransmit(unsigned char* data, unsigned int len_data);
+    void AsyncStringTransmit(const unsigned char* data);
     /**
      * @brief Проверить, готов ли пакет к обработке.
      * @return true, если пакет готов.

@@ -4,7 +4,7 @@
 #include "UARTHandler.h"
 
 ClockDisplay clockDisplay;
-UARTHandler uartHandler;
+UARTHandler uartHandler('\x02','\x03');
 
 void setup() {
     clockDisplay.setup();
@@ -19,15 +19,20 @@ void setup() {
 }
 
 
+unsigned char ans[] = "Is Ready Package";
+bool tt = false;
 void loop() {
     clockDisplay.loop();
     if (uartHandler.isPackageReady()) {
-        digitalWrite(LED_BUILTIN, HIGH);
+        digitalWrite(LED_BUILTIN, tt);
+        tt = !tt;
+        uartHandler.AsyncStringTransmit(uartHandler.getBuffer());
+        // uartHandler.AsyncStringTransmit(ans);
         delay(1000);
-        uartHandler.asyncTransmit(uartHandler.getPackageLength());
+        // uartHandler.asyncTransmit(uartHandler.getPackageLength());
     } else {
-        digitalWrite(LED_BUILTIN, LOW);
-        delay(1000);
+        // digitalWrite(LED_BUILTIN, LOW);
+        // delay(1000);
     }
 }
  
