@@ -12,6 +12,10 @@ void setup() {
     // Serial.begin(9600);
     pinMode(LED_BUILTIN, OUTPUT);
     sei();
+    String welcome = "Arduino Nano has initilizated";
+    for(int i = 0 ; i < welcome.length(); i++) {
+        uartHandler.transmit(welcome[i]);
+    }
 }
 
 
@@ -23,5 +27,5 @@ void loop() {
     } else {
         digitalWrite(LED_BUILTIN, LOW);
     }
-    uartHandler.transmit('H');
 }
+ 

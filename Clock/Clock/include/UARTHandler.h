@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #define LEN_CIRCLE_BUFFER 255
+#define TX_BUFFER_SIZE 255
 
 /**
  * @class UARTHandler
@@ -85,7 +86,11 @@ class UARTHandler {
      * @param data Байты для передачи.
      */
     void transmit(unsigned char data);
-
+    /**
+     * @brief неблокирующий вызов
+     * @param data Байты для передачи.
+     */
+    void asyncTransmit(unsigned char data);
     /**
      * @brief Проверить, готов ли пакет к обработке.
      * @return true, если пакет готов.
@@ -108,12 +113,30 @@ class UARTHandler {
      * @brief Сбросить флаг готовности пакета после обработки.
      */
     void resetPackageReady();
-
+    
     /**
      * @brief Обработчик прерывания по приему байта. Вызывать из ISR.
      */
     void handleISR();
+    /**
+     * @brief
+     * @return 
+     */    
+    bool IsTxHeadEqualsTail();
+    /// @brief 
+    void enableUDRIE();
+    /// @brief 
+    void disableUDRIE();
+    /**
+     * @brief
+     * 
+     * @param txTail
+     * 
+     * @return
+     */
+    uint8_t GetValueTxBuffer(uint8_t txTail);
 
+    uint8_t GetTxTail();
    private:
     unsigned char buffer[LEN_CIRCLE_BUFFER];
     /// @brief индекс для записи нового байта (tail)
@@ -130,6 +153,12 @@ class UARTHandler {
     const unsigned char symbolParcelStart;
     /// @brief Символ обозначающий конец посылки
     const unsigned char symbolParcelEnd;
+    /// @brief 
+    volatile uint8_t txBuffer[TX_BUFFER_SIZE];
+    /// @brief 
+    volatile uint8_t txHead;
+    /// @brief 
+    volatile uint8_t txTall;
 };
 
 extern UARTHandler uartHandler;
