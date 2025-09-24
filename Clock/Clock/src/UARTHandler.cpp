@@ -83,8 +83,10 @@ void UARTHandler::handleISR() {
         }
     }
 }
-
+bool state = false;
 // // Глобальная функция для ISR, делегирующая обработку в класс
 ISR(USART_RX_vect) {
     uartHandler.handleISR();
+    digitalWrite(LED_BUILTIN, state);
+    state = !state;
 }

@@ -3,7 +3,7 @@
 const char *_LOGIN_AP = "AP_DIMA_K";
 const char *_PASSWORD_AP = "PASSWORD";
 
-const char *_LOGIN_STA = "Xiaomi_1C16"; // home : Xiaomi_1C16
+const char *_LOGIN_STA = "Xiaomi_1C16";  // home : Xiaomi_1C16
 const char *_PASSWORD_STA = "20081111";
 
 WiFiUDP ntpUDP;
@@ -26,8 +26,7 @@ bool blink = true;
 // #define MYPORT_RX 3
 // EspSoftwareSerial::UART myPort;
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     Serial.println("next step setup modes");
     CustomWiFiModule.setupingTwoModes();
@@ -46,29 +45,37 @@ void setup()
 
     pinMode(LED_BUILTIN, OUTPUT);
 }
-
-void loop()
-{
+unsigned int delayTimer = 250;
+unsigned int cnt = 0;
+void loop() {
     digitalWrite(LED_BUILTIN, blink);
     blink = !blink;
-    auto func = CustomWiFiModule.isConnectedToWifi(); // Создаем ссылку на лямбду
-    bool result = func();                             // Вычисляем результат
-    if (result)
-    {
+    auto func = CustomWiFiModule.isConnectedToWifi();  // Создаем ссылку на лямбду
+    bool result = func();                              // Вычисляем результат
+    if (result) {
         digitalWrite(LED_BUILTIN, false);
-        if (CustomWiFiModule.ConnectedToWIfi())
-        {
+        if (CustomWiFiModule.ConnectedToWIfi()) {
             Serial.println("Succerful connect to WiFi");
             Serial.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
             // myPort.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
-        }
-        else
-        {
+        } else {
             Serial.println("Aborted connect to WiFi");
         }
         digitalWrite(LED_BUILTIN, true);
     }
-    delay(250);
+    delay(delayTimer);
+    if (WiFi.softAPgetStationNum() > 0) {
+        int numClients = WiFi.softAPgetStationNum();
+        delayTimer = 50;
+        if (cnt % 100 == 0) {
+            Serial.print("Conncted device : ");
+            Serial.print(numClients);
+            Serial.println("s1e");
+        }
+    } else {
+        delayTimer = 250;
+    }
+    cnt++;
     // timeClient.update();
     // Serial.println(timeClient.GetFormattedTimeForDisplay());
 }
