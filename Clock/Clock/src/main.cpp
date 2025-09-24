@@ -4,10 +4,10 @@
 #include "UARTHandler.h"
 
 ClockDisplay clockDisplay;
+UARTHandler uartHandler;
 
 void setup() {
     clockDisplay.setup();
-    UARTHandler uartHandler;
     uartHandler.begin(103);
     sei();
 }
