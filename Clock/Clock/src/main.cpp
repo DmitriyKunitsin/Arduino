@@ -23,9 +23,11 @@ void loop() {
     clockDisplay.loop();
     if (uartHandler.isPackageReady()) {
         digitalWrite(LED_BUILTIN, HIGH);
-        delay(2000);
+        delay(1000);
+        uartHandler.asyncTransmit(uartHandler.getPackageLength());
     } else {
         digitalWrite(LED_BUILTIN, LOW);
+        delay(1000);
     }
 }
  

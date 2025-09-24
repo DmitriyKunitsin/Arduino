@@ -53,16 +53,21 @@ void UARTHandler::asyncTransmit(unsigned char data) {
 
     enableUDRIE();
 }
+void UARTHandler::AsyncStringTransmit(unsigned char* data, unsigned int len_data) {
+    for (unsigned int i = 0; i < len_data; i++) {
+        asyncTransmit(data[i]);
+    }
+}
 bool UARTHandler::isPackageReady() {
-    return packageIsReady;
+    return this->packageIsReady;
 }
 
 const unsigned char* UARTHandler::getBuffer() const {
-    return buffer;
+    return this->buffer;
 }
 
 uint8_t UARTHandler::getPackageLength() const {
-    return lenPackage;
+    return this->lenPackage;
 }
 
 void UARTHandler::resetPackageReady() {
@@ -85,7 +90,7 @@ void UARTHandler::handleISR() {
     tailPackage = nextTail;
 
     if (receivedByte == symbolParcelStart) {
-        packageStart = tailPackage;  // начало пакета — следующий индекс после 'r'
+        packageStart = tailPackage;  // начало пакета — следующий индекс
         lenPackage = 0;
         packageIsReady = false;
     } else if (receivedByte == symbolParcelEnd) {
@@ -126,9 +131,9 @@ bool state = false;
  * Срабатывает, когда в регистре приёма (UDR0) появляется новый принятый байт.
  */
 ISR(USART_RX_vect) {
-    // uartHandler.handleISR();
-    unsigned char temp = UDR0;
-    uartHandler.asyncTransmit(temp);
+    uartHandler.handleISR();
+    // unsigned char temp = UDR0;
+    // uartHandler.asyncTransmit(temp);
     digitalWrite(LED_BUILTIN, state);
     state = !state;
 }
