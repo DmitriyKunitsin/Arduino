@@ -19,10 +19,18 @@ void UARTHandler::begin(unsigned char ubrr) {
     UBRR0L = (unsigned char)ubrr;
 
     /* Включение приёмника, передатчика и прерывания по приёму */
-    UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
+    UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0) | (1 << UDRIE0);
 
-    /* Формат кадра: 8 бит данных, 2 стоп бита */
-    UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+    /* Формат кадра: 8 бит данных,1 стоп бита */
+    /**
+    *  USBS0 = 0	1 стоп-бит
+    *  USBS0 = 1	2 стоп-бита
+    *  UCSZ01:0 = 00	5 бит данных
+    *  UCSZ01:0 = 01	6 бит данных
+    *  UCSZ01:0 = 10	7 бит данных
+    *  UCSZ01:0 = 11	8 бит данных
+     */
+    UCSR0C = (0 << USBS0) | (3 << UCSZ00);
 }
 
 unsigned char UARTHandler::receive() {
@@ -31,7 +39,7 @@ unsigned char UARTHandler::receive() {
 }
 
 void UARTHandler::transmit(unsigned char data) {
-    while (!(UCSR0A & (1 << UDRE0)));
+    while (!(UCSR0A & (1 << UDRE0)));  // ждём, пока регистр пуст
     UDR0 = data;
 }
 
@@ -85,8 +93,25 @@ void UARTHandler::handleISR() {
 }
 bool state = false;
 // // Глобальная функция для ISR, делегирующая обработку в класс
+/**
+ * USART_RX_vect прерывание при приёме данных (Receive Complete)
+ * Срабатывает, когда в регистре приёма (UDR0) появляется новый принятый байт.
+ */
 ISR(USART_RX_vect) {
     uartHandler.handleISR();
     digitalWrite(LED_BUILTIN, state);
     state = !state;
+}
+
+/**
+ * USART_UDRE_vect прерывание при пустом регистре передачи (Data Register Empty)
+ * Срабатывает, когда регистр передачи (UDR0) готов принять новый байт (то есть пуст).
+ */
+ISR(USART_UDRE_vect) {
+}
+/**
+ * USART_TX_vect прерывание по окончании передачи (Transmit Complete)
+ * Срабатывает, когда передача текущего байта полностью завершена (включая сдвиг всех бит и стоп-бит)
+ */
+ISR(USART_TX_vect) {
 }

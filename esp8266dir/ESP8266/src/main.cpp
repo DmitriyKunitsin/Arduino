@@ -67,10 +67,10 @@ void loop() {
     if (WiFi.softAPgetStationNum() > 0) {
         int numClients = WiFi.softAPgetStationNum();
         delayTimer = 50;
-        if (cnt % 100 == 0) {
-            Serial.print("Conncted device : ");
-            Serial.print(numClients);
-            Serial.println("s1e");
+        if (cnt % 25 == 0) {
+            // Serial.print("Conncted device : ");
+            // Serial.print(numClients);
+            Serial.print("s1e");
         }
     } else {
         delayTimer = 250;
