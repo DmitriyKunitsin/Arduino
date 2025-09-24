@@ -9,13 +9,16 @@ UARTHandler uartHandler;
 void setup() {
     clockDisplay.setup();
     uartHandler.begin(103);
+    pinMode(LED_BUILTIN, OUTPUT);
     sei();
 }
-
 void loop() {
     clockDisplay.loop();
-    if(uartHandler.isPackageReady()) {
 
+    if (uartHandler.isPackageReady()) {
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(2000);
+    } else {
+        digitalWrite(LED_BUILTIN, LOW);
     }
 }
-
