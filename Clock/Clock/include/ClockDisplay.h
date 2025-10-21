@@ -83,6 +83,7 @@ private:
     void incrementMinutes(unsigned int &min);
     void updateClock();
     void updateTime();
+    void externalUpdateTimes(unsigned int hour, unsigned int min);
     void localInterrapt();
     void checkDurationBtnSetting();
     bool changeSetment(bool lvlSegment);

@@ -145,7 +145,11 @@ void ClockDisplay::updateClock() {
         seconds++;
     }
 }
-
+void ClockDisplay::externalUpdateTimes(unsigned int hour, unsigned int min) {
+    this->hour = hour;
+    this->minuts = min;
+    updateTime();
+}
 void ClockDisplay::updateTime() {
     timeArr[0] = getLowByte(hour);
     timeArr[1] = getHighByte(hour);
