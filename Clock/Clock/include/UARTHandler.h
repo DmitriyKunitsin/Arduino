@@ -109,7 +109,11 @@ class UARTHandler {
      * @return Указатель на буфер с принятыми данными.
      */
     const unsigned char* getBuffer() const;
-
+    /**
+     * @brief Метод возвращает обработаный пакет в кольцевом буфере
+     * @return Массив байт принятой посылки
+     */
+    const unsigned char* getFilledBuffer() const;
     /**
      * @brief Получить длину текущего пакета.
      * @return Длина пакета.

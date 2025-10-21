@@ -73,7 +73,15 @@ bool UARTHandler::isPackageReady() {
 const unsigned char* UARTHandler::getBuffer() const {
     return this->buffer;
 }
-
+const unsigned char* UARTHandler::getFilledBuffer() const {
+    int lenAnswer = this->tailPackage - this->lenPackage;
+    unsigned char* answer = new unsigned char[lenAnswer] ;
+    int idxWriter = 0;
+    for(int i = this->tailPackage; i < this->lenPackage; i++) {
+        answer[idxWriter++] = this->buffer[i];
+    }
+    return answer;
+}
 uint8_t UARTHandler::getPackageLength() const {
     return this->lenPackage;
 }
