@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 
 UARTHandler::UARTHandler()
-    : tailPackage(0), headPackage(0), packageStart(0), lenPackage(0), packageIsReady(false), symbolParcelStart('s'), symbolParcelEnd('e') {
+    : tailPackage(0), headPackage(0), packageStart(0), lenPackage(0), packageIsReady(false), symbolParcelStart('s'), symbolParcelEnd('e'), txHead(0), txTail(0) {
 }
 UARTHandler::UARTHandler(unsigned char symbolParcelStart, unsigned char symbolParcelEnd) : tailPackage(0),
                                                                                            headPackage(0),
@@ -11,7 +11,9 @@ UARTHandler::UARTHandler(unsigned char symbolParcelStart, unsigned char symbolPa
                                                                                            lenPackage(0),
                                                                                            packageIsReady(false),
                                                                                            symbolParcelStart(symbolParcelStart),
-                                                                                           symbolParcelEnd(symbolParcelEnd) {
+                                                                                           symbolParcelEnd(symbolParcelEnd),
+                                                                                           txHead(0), 
+                                                                                           txTail(0) {
 }
 void UARTHandler::begin(unsigned char ubrr) {
     /* Установка baudrate */
@@ -19,7 +21,7 @@ void UARTHandler::begin(unsigned char ubrr) {
     UBRR0L = (unsigned char)ubrr;
 
     /* Включение приёмника, передатчика и прерывания по приёму */
-    UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0) | (1 << UDRIE0);
+    UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
 
     /* Формат кадра: 8 бит данных,1 стоп бита */
     /**
@@ -45,9 +47,10 @@ void UARTHandler::transmit(unsigned char data) {
 void UARTHandler::asyncTransmit(unsigned char data) {
     uint8_t nextHead = (this->txHead + 1) % TX_BUFFER_SIZE;
 
-    while (nextHead == this->txHead) {
+    if (nextHead == this->txTail) {
+        // Буфер полон — игнорируем
+        return;
     }
-
     this->txBuffer[txHead] = data;
     this->txHead = nextHead;
 
@@ -55,7 +58,7 @@ void UARTHandler::asyncTransmit(unsigned char data) {
 }
 size_t strlen(const unsigned char* const str) {
     const unsigned char* s = str;
-    while (*s != '\n') {
+    while (*s != '\0') {
         s++;
     }
     return s - str;
@@ -73,14 +76,9 @@ bool UARTHandler::isPackageReady() {
 const unsigned char* UARTHandler::getBuffer() const {
     return this->buffer;
 }
-const unsigned char* UARTHandler::getFilledBuffer() const {
-    int lenAnswer = this->tailPackage - this->lenPackage;
-    unsigned char* answer = new unsigned char[lenAnswer] ;
-    int idxWriter = 0;
-    for(int i = this->tailPackage; i < this->lenPackage; i++) {
-        answer[idxWriter++] = this->buffer[i];
-    }
-    return answer;
+const unsigned char* UARTHandler::getFilledBuffer() const{
+    if (!packageIsReady) return nullptr;
+    return &this->buffer[this->packageStart];
 }
 uint8_t UARTHandler::getPackageLength() const {
     return this->lenPackage;
@@ -88,8 +86,9 @@ uint8_t UARTHandler::getPackageLength() const {
 
 void UARTHandler::resetPackageReady() {
     packageIsReady = false;
-    // После обработки пакета сдвигаем headPackage, освобождая буфер
-    headPackage = (packageStart + lenPackage) % LEN_CIRCLE_BUFFER;
+    // Освобождаем буфер: сдвигаем headPackage к концу пакета
+    this->headPackage = (this->packageStart + this->lenPackage) % LEN_CIRCLE_BUFFER;
+    this->lenPackage = 0;
 }
 
 void UARTHandler::handleISR() {
@@ -103,22 +102,21 @@ void UARTHandler::handleISR() {
     }
 
     buffer[tailPackage] = receivedByte;
+    uint8_t currentIndex = tailPackage;  // индекс текущего байта
     tailPackage = nextTail;
 
     if (receivedByte == symbolParcelStart) {
-        packageStart = tailPackage;  // начало пакета — следующий индекс
-        lenPackage = 0;
+        packageStart = currentIndex;  // начало пакета — следующий индекс
+        lenPackage = 1;
         packageIsReady = false;
     } else if (receivedByte == symbolParcelEnd) {
-        if (tailPackage >= packageStart) {
-            lenPackage = tailPackage - packageStart;
-        } else {
-            lenPackage = LEN_CIRCLE_BUFFER - packageStart + tailPackage;
+        if (packageStart != 0 || lenPackage > 0) {  // Проверяем, что пакет начат
+            lenPackage++;  
+            packageIsReady = true;
         }
-        packageIsReady = true;
     } else {
-        if (!packageIsReady) {
-            lenPackage++;
+        if (!packageIsReady && lenPackage > 0) {
+            lenPackage++;  // Увеличиваем только если пакет начат
         }
     }
 }
@@ -131,14 +129,15 @@ void UARTHandler::disableUDRIE() {
 }
 
 bool UARTHandler::IsTxHeadEqualsTail() {
-    return this->txHead == this->txTall;
+    return this->txHead == this->txTail;
 }
 uint8_t UARTHandler::GetValueTxBuffer(uint8_t txTail) {
-    this->txTall = (this->txTall + 1) % TX_BUFFER_SIZE;
-    return this->txBuffer[txTail];
+    uint8_t value = this->txBuffer[this->txTail];
+    this->txTail = (this->txTail + 1) % TX_BUFFER_SIZE;
+    return value;
 }
 uint8_t UARTHandler::GetTxTail() {
-    return this->txTall;
+    return this->txTail;
 }
 bool state = false;
 // // Глобальная функция для ISR, делегирующая обработку в класс

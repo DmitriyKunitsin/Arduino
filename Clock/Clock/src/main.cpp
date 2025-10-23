@@ -26,7 +26,9 @@ void loop() {
     if (uartHandler.isPackageReady()) {
         digitalWrite(LED_BUILTIN, tt);
         tt = !tt;
+        uartHandler.AsyncStringTransmit("\nstart packed : \n");
         uartHandler.AsyncStringTransmit(uartHandler.getFilledBuffer());
+        uartHandler.AsyncStringTransmit("\nstop packed : \n");
         // uartHandler.AsyncStringTransmit(ans);
         delay(1000);
         // uartHandler.asyncTransmit(uartHandler.getPackageLength());

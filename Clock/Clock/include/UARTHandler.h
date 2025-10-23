@@ -170,7 +170,7 @@ class UARTHandler {
     /// @brief
     volatile uint8_t txHead;
     /// @brief
-    volatile uint8_t txTall;
+    volatile uint8_t txTail;
 };
 
 extern UARTHandler uartHandler;
