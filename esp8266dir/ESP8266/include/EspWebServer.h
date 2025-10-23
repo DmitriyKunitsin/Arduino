@@ -1,6 +1,8 @@
 #ifndef ESPWEBSERVER_H
 #define ESPWEBSERVER_H
 
+#define NOTVALIDTIME 0xFF
+
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
@@ -109,7 +111,22 @@ public:
     /// @note Метод является константным и не изменяет состояние объекта.
     /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
     const char *getWifiSSID() const;
+    /// @brief Получить Пароль от Wi-Fi сети
+    /// Метод возвращает указатель на текущий пароль, установленный для подключения к Wi-Fi.
+    /// @return  Указатель на строку с паролем (const char*) или nullptr
+    /// @note Метод является константным и не изменяет состояние объекта.
+    /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
     const char *getWifiPassword() const;
+    /// @brief Получить установленный час
+    /// Метод преобразует строку setHour в число и возвращает час в диапазоне от 0 до 23.
+    /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
+    /// @return byte: час (0-23) или NOTVALIDTIME при ошибке
+    byte getSetHour() const;
+    /// @brief Получить установленную минуту
+    /// Метод преобразует строку setMinute в число и возвращает минуту в диапазоне от 0 до 59.
+    /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
+    /// @return byte: минута (0-59) или NOTVALIDTIME при ошибке
+    byte getSetMin() const;
     /// @brief Пробует подключиться к указанному WiFi
     /// @return true в случае успеха, иначе false
     bool tryConnectedToSTA();

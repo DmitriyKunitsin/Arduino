@@ -77,6 +77,39 @@ const char *EspWebServer::getWifiPassword() const {
         return nullptr;
     return this->wifiPassword;
 }
+byte EspWebServer::getSetHour() const {
+    if (!this->setHour) {
+        return NOTVALIDTIME;  // nullptr — ошибка
+    }
+    errno = 0;  // Сброс ошибки
+    char* endPtr;
+    long hour = strtol(this->setHour, &endPtr, 10);  // База 10 для десятичных чисел
+    // Проверки:
+    // 1. endPtr должен указывать на конец строки (т.е. вся строка — число)
+    // 2. Нет ошибки переполнения (errno != ERANGE)
+    // 3. hour в диапазоне 0-23
+    if (endPtr == this->setHour || *endPtr != '\0' || errno == ERANGE || hour < 0 || hour > 23) {
+        return NOTVALIDTIME;  // Не число, мусор, переполнение или вне диапазона
+    }
+    return static_cast<byte>(hour);
+}
+byte EspWebServer::getSetMin() const {
+    if(!this->setMinute) {
+        return NOTVALIDTIME;
+    }
+
+    errno = 0; // сброс ошибки
+    char* endPtr;
+    long minute = strtol(this->setMinute, &endPtr, 10);
+    // Проверки:
+    // 1. endPtr должен указывать на конец строки (т.е. вся строка — число)
+    // 2. Нет ошибки переполнения (errno != ERANGE)
+    // 3. minute в диапазоне 0-59
+    if (endPtr == this->setMinute || *endPtr != '\0' || errno == ERANGE || minute < 0 || minute > 59) {
+        return NOTVALIDTIME;  // Не число, мусор, переполнение или вне диапазона
+    }
+    return static_cast<byte>(minute);
+}
 bool EspWebServer::tryConnectedToSTA() {
     if (this->wifiSSID == nullptr && this->wifiPassword == nullptr) {
         return false;
@@ -124,8 +157,7 @@ void EspWebServer::setupWiFiApMode(const char *const loginAP, const char *const 
     WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
     Serial.println("initialization Acess Point mode");
 }
-void EspWebServer::setupTwoModes(const char *const loginAP, const char *const paswwodAP
-    , const char *const SSID, const char *const PASSWORD) {
+void EspWebServer::setupTwoModes(const char *const loginAP, const char *const paswwodAP, const char *const SSID, const char *const PASSWORD) {
     if (loginAP == nullptr || paswwodAP == nullptr || SSID == nullptr || PASSWORD == nullptr) {
         Serial.println("NOT initialization TWO  AP_STA modes");
         return;
