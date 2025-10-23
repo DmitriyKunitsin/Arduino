@@ -56,7 +56,10 @@ void loop() {
                 JsonDocument Time;
                 Time["hour"] = hour;
                 Time["minute"] = minute;
-                serializeJson(Time, Serial);
+                String jsonString;
+                serializeJson(Time, jsonString);
+                String packet = String((char)0x02) + jsonString + String((char)0x03);
+                Serial.print(packet);
             }
             // Serial.print("\x02Hello\x03");
         }
