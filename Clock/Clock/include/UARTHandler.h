@@ -114,6 +114,8 @@ class UARTHandler {
      * @return Массив байт принятой посылки
      */
     const unsigned char* getFilledBuffer() const;
+    /// @brief 
+    void clearBuffer();
     /**
      * @brief Получить длину текущего пакета.
      * @return Длина пакета.

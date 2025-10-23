@@ -145,9 +145,28 @@ void ClockDisplay::updateClock() {
         seconds++;
     }
 }
-void ClockDisplay::externalUpdateTimes(unsigned int hour, unsigned int min) {
-    this->hour = hour;
-    this->minuts = min;
+void ClockDisplay::externalUpdateTimes(unsigned char byteTime[4]) {
+    // Валидация диапазонов
+    if (byteTime[0] > 2 || byteTime[1] > 9 || byteTime[2] > 5 || byteTime[3] > 9) {
+        return;
+    }
+
+    unsigned char newHour = byteTime[0] * 10 + byteTime[1];  // Для проверки: 0–23
+    unsigned char newMinute = byteTime[2] * 10 + byteTime[3];  // 0–59
+    // Проверка перед присвоением
+    if (newHour > 23 || newMinute > 59)
+    {
+        return; 
+    } 
+
+    // Обновление внутренних переменных (в формате: high byte = десятки, low byte = единицы)
+    hour = (byteTime[0] << 8) | byteTime[1];       // hourTens в high, hourUnits в low
+    minuts = (byteTime[2] << 8) | byteTime[3];     // minTens в high, minUnits в low
+
+    // Сброс seconds для синхронизации (чтобы не было внезапного инкремента)
+    seconds = 0;
+
+    // Обновление timeArr для отображения
     updateTime();
 }
 void ClockDisplay::updateTime() {

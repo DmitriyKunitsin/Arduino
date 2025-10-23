@@ -80,6 +80,12 @@ const unsigned char* UARTHandler::getFilledBuffer() const{
     if (!packageIsReady) return nullptr;
     return &this->buffer[this->packageStart];
 }
+void UARTHandler::clearBuffer() 
+{
+    packageIsReady = false;
+    packageStart = 0;
+    lenPackage = 0;
+}
 uint8_t UARTHandler::getPackageLength() const {
     return this->lenPackage;
 }

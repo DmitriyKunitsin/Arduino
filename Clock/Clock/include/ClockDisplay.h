@@ -9,7 +9,7 @@ class ClockDisplay {
     
     void setup();
     void loop();
-    void externalUpdateTimes(unsigned int hour, unsigned int min);
+    void externalUpdateTimes(unsigned char newTime[4]);
 
 private:
     // Пины
