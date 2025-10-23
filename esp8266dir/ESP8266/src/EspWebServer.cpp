@@ -65,6 +65,7 @@ void EspWebServer::handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *da
         Serial.println("Minutes : " + String(this->setMinute));
 
         bufferBody = "";
+        this->isNewDataTime = true;
     }
 }
 const char *EspWebServer::getWifiSSID() const {
@@ -77,7 +78,9 @@ const char *EspWebServer::getWifiPassword() const {
         return nullptr;
     return this->wifiPassword;
 }
-String EspWebServer::getSetHour() const {
+String EspWebServer::getSetHour() {
+    this->isNewDataTime = false;
+
     if (this->setHour.isEmpty()) {
         return NOTVALIDTIME;  // nullptr — ошибка
     }
@@ -98,7 +101,9 @@ String EspWebServer::getSetHour() const {
     }
     return static_cast<String>(hour);
 }
-String EspWebServer::getSetMin() const {
+String EspWebServer::getSetMin() {
+    this->isNewDataTime = false;
+
     if (this->setMinute.isEmpty()) {
         return NOTVALIDTIME;
     }

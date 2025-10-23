@@ -35,19 +35,15 @@ void loop() {
         if (CustomWiFiModule.ConnectedToWIfi()) {
             Serial.println("Succerful connect to WiFi");
             Serial.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
-            // myPort.println(CustomWiFiModule.getNetworksTimeFormattedDislpay());
         } else {
             Serial.println("Aborted connect to WiFi");
         }
         digitalWrite(LED_BUILTIN, true);
     }
-    delay(delayTimer);
-    if (WiFi.softAPgetStationNum() > 0) {
-        int numClients = WiFi.softAPgetStationNum();
-        delayTimer = 50;
-        if (cnt % 25 == 0) {
-            // Serial.print("Conncted device : ");
-            // Serial.print(numClients);
+    auto func_dataTime = CustomWiFiModule.isNewDataTime();
+    bool isTime = func_dataTime();
+    if (isTime) {
+        for (int i = 0; i < 5; i++) {// пока что пускай отправит 5 раз и на этом хватит
             String hour = CustomWiFiModule.getSetHour();
             String minute = CustomWiFiModule.getSetMin();
             if (hour == NOTVALIDTIME && minute == NOTVALIDTIME) {
@@ -59,14 +55,33 @@ void loop() {
                 String jsonString;
                 serializeJson(Time, jsonString);
                 String packet = String((char)0x02) + jsonString + String((char)0x03);
-                Serial.print(packet);
+                Serial.print(packet);  // TODO : Перенести это работу в class TimeManager, чтобы была общая библиотека для сериализации и десериализации
             }
-            // Serial.print("\x02Hello\x03");
         }
+    }
+    delay(delayTimer);
+    if (WiFi.softAPgetStationNum() > 0) {
+        delayTimer = 50;
     } else {
         delayTimer = 250;
     }
-    cnt++;
+    //     int numClients = WiFi.softAPgetStationNum();
+    //     if (cnt % 25 == 0) {
+    //         String hour = CustomWiFiModule.getSetHour();
+    //         String minute = CustomWiFiModule.getSetMin();
+    //         if (hour == NOTVALIDTIME && minute == NOTVALIDTIME) {
+    //             ;
+    //         } else {
+    //             JsonDocument Time;
+    //             Time["hour"] = hour;
+    //             Time["minute"] = minute;
+    //             String jsonString;
+    //             serializeJson(Time, jsonString);
+    //             String packet = String((char)0x02) + jsonString + String((char)0x03);
+    //             Serial.print(packet);  // TODO : Перенести это работу в class TimeManager, чтобы была общая библиотека для сериализации и десериализации
+    //         }
+    //     }
+    // cnt++;
     // timeClient.update();
     // Serial.println(timeClient.GetFormattedTimeForDisplay());
 }

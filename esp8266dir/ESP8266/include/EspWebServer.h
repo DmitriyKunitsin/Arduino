@@ -120,17 +120,21 @@ class EspWebServer : public AsyncWebServer {
     /// Метод преобразует строку setHour в число и возвращает час в диапазоне от 0 до 23.
     /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
     /// @return byte: час (0-23) или NOTVALIDTIME при ошибке
-    String getSetHour() const;
+    String getSetHour();
     /// @brief Получить установленную минуту
     /// Метод преобразует строку setMinute в число и возвращает минуту в диапазоне от 0 до 59.
     /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
     /// @return byte: минута (0-59) или NOTVALIDTIME при ошибке
-    String getSetMin() const;
+    String getSetMin();
     /// @brief Пробует подключиться к указанному WiFi
     /// @return true в случае успеха, иначе false
     bool tryConnectedToSTA();
-
+    /// @brief Сообщает о новом логине пароле для подключения
+    /// Если true, то пришли новые данные
     bool isConnWifi;
+    /// @brief Сообщает о новом времени
+    /// Если true, то пришло новое время
+    bool isNewDataTime;
 
    private:
     /// @brief SSID WiFi сети, к которой должен подключиться сервер
