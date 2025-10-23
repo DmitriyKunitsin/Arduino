@@ -48,7 +48,17 @@ void loop() {
         if (cnt % 25 == 0) {
             // Serial.print("Conncted device : ");
             // Serial.print(numClients);
-            Serial.print("\x02Hello\x03");
+            String hour = CustomWiFiModule.getSetHour();
+            String minute = CustomWiFiModule.getSetMin();
+            if (hour == NOTVALIDTIME && minute == NOTVALIDTIME) {
+                ;
+            } else {
+                JsonDocument Time;
+                Time["hour"] = hour;
+                Time["minute"] = minute;
+                serializeJson(Time, Serial);
+            }
+            // Serial.print("\x02Hello\x03");
         }
     } else {
         delayTimer = 250;

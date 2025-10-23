@@ -1,28 +1,27 @@
 #ifndef ESPWEBSERVER_H
 #define ESPWEBSERVER_H
 
-#define NOTVALIDTIME 0xFF
+#define NOTVALIDTIME "255"
 
-#include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
+#include <ESPAsyncWebServer.h>
 /**
  * @brief Класс для асинхронного веб-сервера на ESP32.
  * Наследует от AsyncWebServer и добавляет кастомные обработчики.
  */
-class EspWebServer : public AsyncWebServer
-{
-public:
+class EspWebServer : public AsyncWebServer {
+   public:
     /**
      * @brief Конструктор по умолчанию, инициализирует сервер на порту 80.
      */
-    EspWebServer() : AsyncWebServer(80)
-    {
+    EspWebServer() : AsyncWebServer(80) {
         wifiSSID = nullptr;
         wifiPassword = nullptr;
         login_AP_MODE = nullptr;
         passwod_AP_MODE = nullptr;
         isConnWifi = false;
+        Serial.println("Server was initilizated");
     }
     /** @brief Инициализирует устройство в режиме станции (STA),
      * пытаясь подключиться к точке доступа с указанными учётными данными.
@@ -33,7 +32,7 @@ public:
      */
     void setupWiFiSTAmode(const char *const loginAP, const char *const paswwodAP);
     /**
-     * 
+     *
      */
     void setupTwoModes(const char *const loginAP, const char *const paswwodAP, const char *const SSID, const char *const PASSWORD);
     /** @brief Запускает режим точки доступа (Access Point, AP), создавая собственную Wi-Fi сеть.
@@ -45,8 +44,8 @@ public:
     void setupWiFiApMode(const char *const loginAP, const char *const passwodAP);
     /**
      * @brief Возвращает колличество доступных точек для подключения и выводит в Serial информацию о них
-     * 
-     * @return int 
+     *
+     * @return int
      */
     int GetAndCheckSumAccessPoints();
     /**
@@ -121,30 +120,30 @@ public:
     /// Метод преобразует строку setHour в число и возвращает час в диапазоне от 0 до 23.
     /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
     /// @return byte: час (0-23) или NOTVALIDTIME при ошибке
-    byte getSetHour() const;
+    String getSetHour() const;
     /// @brief Получить установленную минуту
     /// Метод преобразует строку setMinute в число и возвращает минуту в диапазоне от 0 до 59.
     /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
     /// @return byte: минута (0-59) или NOTVALIDTIME при ошибке
-    byte getSetMin() const;
+    String getSetMin() const;
     /// @brief Пробует подключиться к указанному WiFi
     /// @return true в случае успеха, иначе false
     bool tryConnectedToSTA();
 
     bool isConnWifi;
 
-private:
+   private:
     /// @brief SSID WiFi сети, к которой должен подключиться сервер
     const char *wifiSSID;
     /// @brief Пароль от WiFi сети, к которой должен подключиться сервер
     const char *wifiPassword;
     /// @brief Полученный час с клиента
-    const char *setHour;
+    String setHour;
     /// @brief Полученные минуты с клиента
-    const char *setMinute;
+    String setMinute;
     /// @brief Логин режима Acess point
     const char *login_AP_MODE;
     /// @brief пароль режима Acess point
     const char *passwod_AP_MODE;
 };
-#endif // ESPWEBSERVER_H
+#endif  // ESPWEBSERVER_H

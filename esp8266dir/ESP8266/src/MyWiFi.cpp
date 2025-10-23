@@ -1,7 +1,14 @@
 #include "MyWiFi.h"
+
 MyClassEsp8266::MyClassEsp8266(const char *const login, const char *const password,
                                const char *logSTA, const char *passSTA, WiFiUDP &udpInstance)
-    : _loginAP(login), _passwordAP(password), _loginSTA(logSTA), _passwordSTA(passSTA), deviceIP(192, 168, 4, 1), timer(udpInstance) {
+    : _loginAP(login),
+      _passwordAP(password),
+      _loginSTA(logSTA),
+      _passwordSTA(passSTA),
+      deviceIP(192, 168, 4, 1),
+      timer(udpInstance),
+      server() {
     Serial.println("init construct class for module WiFi");
 }
 void MyClassEsp8266::initAPmode() {
@@ -16,35 +23,6 @@ bool MyClassEsp8266::ConnectedToWIfi() {
 bool MyClassEsp8266::setupingTwoModes() {
     this->server.setupTwoModes(this->_loginAP, this->_passwordAP, this->_loginSTA, this->_passwordSTA);
     return true;
-    // // WiFi.enableInsecureWEP(false);
-    // WiFi.mode(WIFI_AP_STA);
-    // // WiFi.setPhyMode(WIFI_PHY_MODE_11G);
-    // WiFi.disconnect();
-    // WiFi.softAP(this->_loginAP, this->_passwordAP);
-    // // this->server.GetAndCheckSumAccessPoints();
-    // WiFi.begin(this->_loginSTA, this->_passwordSTA);
-    // int countTry = 0;
-    // Serial.println("Connecting to Wifi " + String(this->_loginSTA));
-    // while (WiFi.status() != WL_CONNECTED && countTry <= 30)
-    // {
-    //     Serial.println("Try connecting " + String(countTry));
-    //     delay(500);
-    //     countTry++;
-    // }
-    // if (WiFi.status() == WL_CONNECTED)
-    // {
-    //     Serial.println("Connecting successful!");
-    //     Serial.print("IP address : ");
-    //     // Serial.println(WiFi.localIP());
-    //     Serial.println("Back to method");
-    //     return true;
-    // }
-    // else
-    // {
-    //     Serial.println("Failed to connect to WiFi after multiple attempts");
-    //     // initAPmode();
-    //     return false;
-    // }
 }
 
 bool MyClassEsp8266::serverOn() {
@@ -79,6 +57,15 @@ const char *MyClassEsp8266::getWifiSSID() {
 const char *MyClassEsp8266::getWifiPassword() {
     return this->server.getWifiPassword();
 }
+
+String MyClassEsp8266::getSetHour() {
+    return this->server.getSetHour();
+}
+
+String MyClassEsp8266::getSetMin() {
+    return this->server.getSetMin();
+}
+
 String MyClassEsp8266::getNetworksTimeFormattedDislpay() {
     this->timer.update();
     return this->timer.GetFormattedTimeForDisplay();

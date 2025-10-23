@@ -11,7 +11,7 @@ void EspWebServer::onBody(AsyncWebServerRequest *request, uint8_t *data, size_t 
     } else if (url == "/set-time") {
         handleSetTimeBody(request, data, len, index, total);
     } else {
-        request->send(404, "text\plain", "Unknown route");
+        request->send(404, "text/plain", "Unknown route");
     }
 }
 void EspWebServer::handleLoginBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
@@ -58,8 +58,8 @@ void EspWebServer::handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *da
             return;
         }
 
-        this->setHour = fullAnswer["hours"];
-        this->setMinute = fullAnswer["minutes"];
+        this->setHour = fullAnswer["hours"].as<String>();
+        this->setMinute = fullAnswer["minutes"].as<String>();
 
         Serial.println("Hour : " + String(this->setHour));
         Serial.println("Minutes : " + String(this->setMinute));
@@ -77,38 +77,43 @@ const char *EspWebServer::getWifiPassword() const {
         return nullptr;
     return this->wifiPassword;
 }
-byte EspWebServer::getSetHour() const {
-    if (!this->setHour) {
+String EspWebServer::getSetHour() const {
+    if (this->setHour.isEmpty()) {
         return NOTVALIDTIME;  // nullptr — ошибка
     }
+    // const char* req = this->setHour;  // Сохраняем указатель на строку setHour для печати (весь строки, а не один символ)
+    // Serial.print("set hour: ");  // Логирование: начало сообщения
+    // Serial.print(req);  // Логирование: печать всей строки setHour (например, "12")
+
     errno = 0;  // Сброс ошибки
-    char* endPtr;
-    long hour = strtol(this->setHour, &endPtr, 10);  // База 10 для десятичных чисел
+    char *endPtr;
+    long hour = strtol(this->setHour.c_str(), &endPtr, 10);  // База 10 для десятичных чисел
     // Проверки:
     // 1. endPtr должен указывать на конец строки (т.е. вся строка — число)
     // 2. Нет ошибки переполнения (errno != ERANGE)
     // 3. hour в диапазоне 0-23
-    if (endPtr == this->setHour || *endPtr != '\0' || errno == ERANGE || hour < 0 || hour > 23) {
+    if (endPtr == this->setHour.c_str() || *endPtr != '\0' || errno == ERANGE || hour < 0 || hour > 23) {
+        Serial.print("set hour failed verification");
         return NOTVALIDTIME;  // Не число, мусор, переполнение или вне диапазона
     }
-    return static_cast<byte>(hour);
+    return static_cast<String>(hour);
 }
-byte EspWebServer::getSetMin() const {
-    if(!this->setMinute) {
+String EspWebServer::getSetMin() const {
+    if (this->setMinute.isEmpty()) {
         return NOTVALIDTIME;
     }
 
-    errno = 0; // сброс ошибки
-    char* endPtr;
-    long minute = strtol(this->setMinute, &endPtr, 10);
+    errno = 0;  // сброс ошибки
+    char *endPtr;
+    long minute = strtol(this->setMinute.c_str(), &endPtr, 10);
     // Проверки:
     // 1. endPtr должен указывать на конец строки (т.е. вся строка — число)
     // 2. Нет ошибки переполнения (errno != ERANGE)
     // 3. minute в диапазоне 0-59
-    if (endPtr == this->setMinute || *endPtr != '\0' || errno == ERANGE || minute < 0 || minute > 59) {
+    if (endPtr == this->setMinute.c_str() || *endPtr != '\0' || errno == ERANGE || minute < 0 || minute > 59) {
         return NOTVALIDTIME;  // Не число, мусор, переполнение или вне диапазона
     }
-    return static_cast<byte>(minute);
+    return static_cast<String>(minute);
 }
 bool EspWebServer::tryConnectedToSTA() {
     if (this->wifiSSID == nullptr && this->wifiPassword == nullptr) {

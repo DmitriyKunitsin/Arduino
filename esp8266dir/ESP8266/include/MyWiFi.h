@@ -37,6 +37,11 @@ public:
     /// @brief Метод обращается к приватному серверу и запрашивает у него сохранённый password wifi
     /// @return строку password
     const char *getWifiPassword();
+    
+    String getSetHour();
+
+    String getSetMin();
+
     /// @brief
     /// @return
     bool ConnectedToWIfi();
