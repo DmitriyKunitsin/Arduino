@@ -102,7 +102,7 @@ void UARTHandler::handleISR() {
     }
 
     buffer[tailPackage] = receivedByte;
-    uint8_t currentIndex = tailPackage;  // индекс текущего байта
+    uint8_t currentIndex = tailPackage + 1;  // индекс текущего байта, но его не учитываем, т.к. это протокол
     tailPackage = nextTail;
 
     if (receivedByte == symbolParcelStart) {
@@ -111,7 +111,6 @@ void UARTHandler::handleISR() {
         packageIsReady = false;
     } else if (receivedByte == symbolParcelEnd) {
         if (packageStart != 0 || lenPackage > 0) {  // Проверяем, что пакет начат
-            lenPackage++;  
             packageIsReady = true;
         }
     } else {
