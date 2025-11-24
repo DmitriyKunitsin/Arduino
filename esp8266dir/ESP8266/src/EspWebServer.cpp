@@ -1,43 +1,31 @@
 #include <EspWebServer.h>
-void EspWebServer::onRequest(AsyncWebServerRequest *request)
-{
+void EspWebServer::onRequest(AsyncWebServerRequest *request) {
     Serial.println("Input method onRequest");
 }
-void EspWebServer::onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final)
-{
+void EspWebServer::onUpload(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final) {
 }
-void EspWebServer::onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
+void EspWebServer::onBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     String url = request->url();
-    if (url == "/login")
-    {
+    if (url == "/login") {
         handleLoginBody(request, data, len, index, total);
-    }
-    else if (url == "/set-time")
-    {
+    } else if (url == "/set-time") {
         handleSetTimeBody(request, data, len, index, total);
-    }
-    else
-    {
-        request->send(404, "text\plain", "Unknown route");
+    } else {
+        request->send(404, "text/plain", "Unknown route");
     }
 }
-void EspWebServer::handleLoginBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-    static String bufferBody; // буфер для накопления тела
-    for (size_t i = 0; i < len; i++)
-    {
+void EspWebServer::handleLoginBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    static String bufferBody;  // буфер для накопления тела
+    for (size_t i = 0; i < len; i++) {
         bufferBody += (char)data[i];
     }
 
-    if (index + len == total)
-    { // проверка не последний ли чанк (конец посылка)
+    if (index + len == total) {  // проверка не последний ли чанк (конец посылка)
         Serial.println("Recieved body : " + bufferBody);
 
         JsonDocument fullAnswer, password, login;
         DeserializationError error = deserializeJson(fullAnswer, bufferBody);
-        if (error)
-        {
+        if (error) {
             Serial.println("deserializeJson error : ");
             Serial.println(error.f_str());
             return;
@@ -53,52 +41,87 @@ void EspWebServer::handleLoginBody(AsyncWebServerRequest *request, uint8_t *data
         this->isConnWifi = true;
     }
 }
-void EspWebServer::handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
-{
-    static String bufferBody; // буфер для накопления тела
-    for (size_t i = 0; i < len; i++)
-    {
+void EspWebServer::handleSetTimeBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    static String bufferBody;  // буфер для накопления тела
+    for (size_t i = 0; i < len; i++) {
         bufferBody += (char)data[i];
     }
 
-    if (index + len == total)
-    { // проверка не последний ли чанк (конец посылка)
+    if (index + len == total) {  // проверка не последний ли чанк (конец посылка)
         Serial.println("Recieved body : " + bufferBody);
 
         JsonDocument fullAnswer, password, login;
         DeserializationError error = deserializeJson(fullAnswer, bufferBody);
-        if (error)
-        {
+        if (error) {
             Serial.println("deserializeJson error : ");
             Serial.println(error.f_str());
             return;
         }
 
-        this->setHour = fullAnswer["hours"];
-        this->setMinute = fullAnswer["minutes"];
+        this->setHour = fullAnswer["hours"].as<String>();
+        this->setMinute = fullAnswer["minutes"].as<String>();
 
         Serial.println("Hour : " + String(this->setHour));
         Serial.println("Minutes : " + String(this->setMinute));
 
         bufferBody = "";
+        this->isNewDataTime = true;
     }
 }
-const char *EspWebServer::getWifiSSID() const
-{
+const char *EspWebServer::getWifiSSID() const {
     if (this->wifiSSID == nullptr)
         return nullptr;
     return this->wifiSSID;
 }
-const char *EspWebServer::getWifiPassword() const
-{
+const char *EspWebServer::getWifiPassword() const {
     if (this->wifiPassword == nullptr)
         return nullptr;
     return this->wifiPassword;
 }
-bool EspWebServer::tryConnectedToSTA()
-{
-    if (this->wifiSSID == nullptr && this->wifiPassword == nullptr)
-    {
+String EspWebServer::getSetHour() {
+    this->isNewDataTime = false;
+
+    if (this->setHour.isEmpty()) {
+        return NOTVALIDTIME;  // nullptr — ошибка
+    }
+    // const char* req = this->setHour;  // Сохраняем указатель на строку setHour для печати (весь строки, а не один символ)
+    // Serial.print("set hour: ");  // Логирование: начало сообщения
+    // Serial.print(req);  // Логирование: печать всей строки setHour (например, "12")
+
+    errno = 0;  // Сброс ошибки
+    char *endPtr;
+    long hour = strtol(this->setHour.c_str(), &endPtr, 10);  // База 10 для десятичных чисел
+    // Проверки:
+    // 1. endPtr должен указывать на конец строки (т.е. вся строка — число)
+    // 2. Нет ошибки переполнения (errno != ERANGE)
+    // 3. hour в диапазоне 0-23
+    if (endPtr == this->setHour.c_str() || *endPtr != '\0' || errno == ERANGE || hour < 0 || hour > 23) {
+        Serial.print("set hour failed verification");
+        return NOTVALIDTIME;  // Не число, мусор, переполнение или вне диапазона
+    }
+    return static_cast<String>(hour);
+}
+String EspWebServer::getSetMin() {
+    this->isNewDataTime = false;
+
+    if (this->setMinute.isEmpty()) {
+        return NOTVALIDTIME;
+    }
+
+    errno = 0;  // сброс ошибки
+    char *endPtr;
+    long minute = strtol(this->setMinute.c_str(), &endPtr, 10);
+    // Проверки:
+    // 1. endPtr должен указывать на конец строки (т.е. вся строка — число)
+    // 2. Нет ошибки переполнения (errno != ERANGE)
+    // 3. minute в диапазоне 0-59
+    if (endPtr == this->setMinute.c_str() || *endPtr != '\0' || errno == ERANGE || minute < 0 || minute > 59) {
+        return NOTVALIDTIME;  // Не число, мусор, переполнение или вне диапазона
+    }
+    return static_cast<String>(minute);
+}
+bool EspWebServer::tryConnectedToSTA() {
+    if (this->wifiSSID == nullptr && this->wifiPassword == nullptr) {
         return false;
     }
     WiFi.mode(WIFI_AP_STA);
@@ -107,12 +130,11 @@ bool EspWebServer::tryConnectedToSTA()
     Serial.println("Conntecting to WiFi : " + String(this->wifiSSID));
     WiFi.disconnect();
     WiFi.begin(this->wifiSSID, this->wifiPassword);
-    byte countTry = 0; /// колличество попыток подключения
-    while (WiFi.status() != WL_CONNECTED)
-    {
+    byte countTry = 0;  /// колличество попыток подключения
+    while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.println("Try connecting : " + String(countTry) + " waiting 500 ms...");
-        if (countTry >= 0x0A) // 10
+        if (countTry >= 0x0F)  // 15
         {
             this->isConnWifi = false;
             break;
@@ -123,10 +145,8 @@ bool EspWebServer::tryConnectedToSTA()
     this->isConnWifi = false;
     return (WiFi.status() == WL_CONNECTED);
 }
-void EspWebServer::setupWiFiSTAmode(const char *const SSID, const char *const PASSWORD)
-{
-    if (SSID == nullptr || PASSWORD == nullptr)
-    {
+void EspWebServer::setupWiFiSTAmode(const char *const SSID, const char *const PASSWORD) {
+    if (SSID == nullptr || PASSWORD == nullptr) {
         Serial.println("NOT initialization STA mode");
         return;
     }
@@ -136,10 +156,8 @@ void EspWebServer::setupWiFiSTAmode(const char *const SSID, const char *const PA
     WiFi.begin(this->wifiSSID, this->wifiPassword);
     Serial.println("initialization STA mode");
 }
-void EspWebServer::setupWiFiApMode(const char *const loginAP, const char *const paswwodAP)
-{
-    if (loginAP == nullptr || paswwodAP == nullptr)
-    {
+void EspWebServer::setupWiFiApMode(const char *const loginAP, const char *const paswwodAP) {
+    if (loginAP == nullptr || paswwodAP == nullptr) {
         Serial.println("NOT initialization Acess Point mode");
         return;
     }
@@ -149,20 +167,29 @@ void EspWebServer::setupWiFiApMode(const char *const loginAP, const char *const 
     WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
     Serial.println("initialization Acess Point mode");
 }
-
-int EspWebServer::GetAndCheckSumAccessPoints()
-{
-    int countWiFiAccessPoints = WiFi.scanNetworks();
-    if (countWiFiAccessPoints == 0)
-    {
-        Serial.println("Сети не найдены");
+void EspWebServer::setupTwoModes(const char *const loginAP, const char *const paswwodAP, const char *const SSID, const char *const PASSWORD) {
+    if (loginAP == nullptr || paswwodAP == nullptr || SSID == nullptr || PASSWORD == nullptr) {
+        Serial.println("NOT initialization TWO  AP_STA modes");
+        return;
     }
-    else
-    {
+    WiFi.mode(WIFI_AP_STA);
+    WiFi.disconnect();  // отключаю от всех текущих подключений
+    this->login_AP_MODE = loginAP;
+    this->passwod_AP_MODE = paswwodAP;
+    WiFi.softAP(this->login_AP_MODE, this->passwod_AP_MODE);
+    this->wifiSSID = SSID;
+    this->wifiPassword = PASSWORD;
+    WiFi.begin(this->wifiSSID, this->wifiPassword);
+    Serial.println("Initilizited succerful modes AP_STA");
+}
+int EspWebServer::GetAndCheckSumAccessPoints() {
+    int countWiFiAccessPoints = WiFi.scanNetworks();
+    if (countWiFiAccessPoints == 0) {
+        Serial.println("Сети не найдены");
+    } else {
         Serial.println(countWiFiAccessPoints);
         Serial.println("  сетей найдено");
-        for (int i = 0; i < countWiFiAccessPoints; i++)
-        {
+        for (int i = 0; i < countWiFiAccessPoints; i++) {
             Serial.print(i + 1);
             Serial.print(": ");
             Serial.print(WiFi.SSID(i));

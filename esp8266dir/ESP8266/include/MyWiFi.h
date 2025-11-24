@@ -2,20 +2,17 @@
 #define MYWIFI_H
 
 // #include <ESPAsyncWebServer.h>
-#include <EspWebServer.h>
 #include <Arduino.h>
+#include <EspWebServer.h>
 #include <LittleFS.h>
+#include <SoftwareSerial.h>  // https://github.com/plerup/espsoftwareserial/
+
 #include <TimeManager.hpp>
-#include <SoftwareSerial.h> // https://github.com/plerup/espsoftwareserial/
 // #include <NTPClient.h>
 // #include <WiFiUdp.h>
 
-
-
-class MyClassEsp8266
-{
-
-public:
+class MyClassEsp8266 {
+   public:
     /// @brief Конструктор инициализирует объект WiFi с указаным логином и паролем
     /// @param loginAP логин
     /// @param passwordAP пароль
@@ -37,21 +34,32 @@ public:
     /// @brief Метод обращается к приватному серверу и запрашивает у него сохранённый password wifi
     /// @return строку password
     const char *getWifiPassword();
+
+    String getSetHour();
+
+    String getSetMin();
+
     /// @brief
     /// @return
     bool ConnectedToWIfi();
     /// @brief
     /// @return
-    std::function<bool()> isConnectedToWifi() const
-    {
-        std::function<bool()> lambda = [this]() -> bool
-        {
+    std::function<bool()> isConnectedToWifi() const {
+        std::function<bool()> lambda = [this]() -> bool {
             return this->server.isConnWifi;
         };
         return lambda;
     }
+
+    std::function<bool()> isNewDataTime() const {
+        std::function<bool()> lambda = [this]() -> bool {
+            return this->server.isNewDataTime;
+        };
+        return lambda;
+    }
     String getNetworksTimeFormattedDislpay();
-private:
+
+   private:
     const char *_loginAP;
     const char *_passwordAP;
     const char *_loginSTA;
@@ -62,4 +70,4 @@ private:
     TimeManager timer;
 };
 
-#endif // ESP8266WIFI_H
+#endif  // ESP8266WIFI_H

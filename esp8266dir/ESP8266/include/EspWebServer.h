@@ -1,26 +1,27 @@
 #ifndef ESPWEBSERVER_H
 #define ESPWEBSERVER_H
 
-#include <ESPAsyncWebServer.h>
+#define NOTVALIDTIME "255"
+
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
+#include <ESPAsyncWebServer.h>
 /**
  * @brief Класс для асинхронного веб-сервера на ESP32.
  * Наследует от AsyncWebServer и добавляет кастомные обработчики.
  */
-class EspWebServer : public AsyncWebServer
-{
-public:
+class EspWebServer : public AsyncWebServer {
+   public:
     /**
      * @brief Конструктор по умолчанию, инициализирует сервер на порту 80.
      */
-    EspWebServer() : AsyncWebServer(80)
-    {
+    EspWebServer() : AsyncWebServer(80) {
         wifiSSID = nullptr;
         wifiPassword = nullptr;
         login_AP_MODE = nullptr;
         passwod_AP_MODE = nullptr;
         isConnWifi = false;
+        Serial.println("Server was initilizated");
     }
     /** @brief Инициализирует устройство в режиме станции (STA),
      * пытаясь подключиться к точке доступа с указанными учётными данными.
@@ -30,7 +31,10 @@ public:
      * @param paswwodAP Пароль точки доступа, необходимый для аутентификации.
      */
     void setupWiFiSTAmode(const char *const loginAP, const char *const paswwodAP);
-
+    /**
+     *
+     */
+    void setupTwoModes(const char *const loginAP, const char *const paswwodAP, const char *const SSID, const char *const PASSWORD);
     /** @brief Запускает режим точки доступа (Access Point, AP), создавая собственную Wi-Fi сеть.
      * Метод создает виртуальную точку доступа, позволяющую устройствам подключаться к данному ESP8266.
      * По умолчанию создается открытая сеть с указанным именем и паролем, доступной по адресу 192.168.4.1.
@@ -40,8 +44,8 @@ public:
     void setupWiFiApMode(const char *const loginAP, const char *const passwodAP);
     /**
      * @brief Возвращает колличество доступных точек для подключения и выводит в Serial информацию о них
-     * 
-     * @return int 
+     *
+     * @return int
      */
     int GetAndCheckSumAccessPoints();
     /**
@@ -106,25 +110,44 @@ public:
     /// @note Метод является константным и не изменяет состояние объекта.
     /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
     const char *getWifiSSID() const;
+    /// @brief Получить Пароль от Wi-Fi сети
+    /// Метод возвращает указатель на текущий пароль, установленный для подключения к Wi-Fi.
+    /// @return  Указатель на строку с паролем (const char*) или nullptr
+    /// @note Метод является константным и не изменяет состояние объекта.
+    /// @note Возвращаемая строка является неизменяемой (const), чтобы предотвратить случайные изменения.
     const char *getWifiPassword() const;
+    /// @brief Получить установленный час
+    /// Метод преобразует строку setHour в число и возвращает час в диапазоне от 0 до 23.
+    /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
+    /// @return byte: час (0-23) или NOTVALIDTIME при ошибке
+    String getSetHour();
+    /// @brief Получить установленную минуту
+    /// Метод преобразует строку setMinute в число и возвращает минуту в диапазоне от 0 до 59.
+    /// Если строка некорректна (не число, мусор, переполнение, nullptr или вне диапазона), возвращает NOTVALIDTIME (0xFF).
+    /// @return byte: минута (0-59) или NOTVALIDTIME при ошибке
+    String getSetMin();
     /// @brief Пробует подключиться к указанному WiFi
     /// @return true в случае успеха, иначе false
     bool tryConnectedToSTA();
-
+    /// @brief Сообщает о новом логине пароле для подключения
+    /// Если true, то пришли новые данные
     bool isConnWifi;
+    /// @brief Сообщает о новом времени
+    /// Если true, то пришло новое время
+    bool isNewDataTime;
 
-private:
+   private:
     /// @brief SSID WiFi сети, к которой должен подключиться сервер
     const char *wifiSSID;
     /// @brief Пароль от WiFi сети, к которой должен подключиться сервер
     const char *wifiPassword;
     /// @brief Полученный час с клиента
-    const char *setHour;
+    String setHour;
     /// @brief Полученные минуты с клиента
-    const char *setMinute;
+    String setMinute;
     /// @brief Логин режима Acess point
     const char *login_AP_MODE;
     /// @brief пароль режима Acess point
     const char *passwod_AP_MODE;
 };
-#endif // ESPWEBSERVER_H
+#endif  // ESPWEBSERVER_H

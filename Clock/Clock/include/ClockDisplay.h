@@ -4,11 +4,12 @@
 #include <Arduino.h>
 
 class ClockDisplay {
-public:
+    public:
     ClockDisplay();
-
+    
     void setup();
     void loop();
+    void externalUpdateTimes(unsigned char newTime[4]);
 
 private:
     // Пины
